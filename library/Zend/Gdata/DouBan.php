@@ -16,32 +16,37 @@ require_once 'DouBan/TagEntry.php';
 require_once 'DouBan/TagFeed.php';
 require_once 'DouBan/CollectionEntry.php';
 require_once 'DouBan/CollectionFeed.php';
+require_once 'client.php';
 
 class Zend_Gdata_DouBan extends Zend_Gdata
 {
 	const SERVER_URL = 'http://api.douban.com';
+	protected $_APIKey = null;
+	protected $_client = null;
 	
 	public static $namespaces = array(
 		'db' => 'http://www.douban.com/xmlns/',
 		'gd' => 'http://schemas.google.com/g/2005',
 	);
 	
-	public function __construct($client = null, $applicationId = null)
+	public function __construct($api_key = null, $secret = null)
     	{
 		//FIXME
         	$this->registerPackage('Zend_Gdata_DouBan');
-		parent::__construct($client, $applicationId);
+		$this->_client = new OAuthClient($api_key, $secret);
+		$this->_APIKey = $api_key;
+		parent::__construct($this->_client, $this->_APIKey);
     	}
 	
 	//API authorization
-	public function getAuthorizationURL()
-	{//TODO
-
+	public function getAuthorizationURL($api_key = null, $secret = null, $callback = null)
+	{
+		return $this->_client->getAuthorizationUrl($api_key, $secret, $callback);
 	}
 	
-	public function programmaticLogin()
-	{//TODO
-
+	public function programmaticLogin($token_key = null, $token_secret = null)
+	{
+		return $this->_client->login($token_key, $token_secret);
 	}
 	
 	public function Post()
