@@ -1,13 +1,19 @@
 <?php
 require_once 'DouBan.php';
 
+$API_KEY = '698805e0675f9cb33c9811a1361ed619';
+$SECRET = '4b3ef67ecd3ffe21';
+
 class TestDouBan
 {
 	protected $_client = null;
+        const TOKEN_KEY = '4c45a313637835afe4d0e93a2a68a10d';
+        const TOKEN_SECRET = '47ffe601bdffa302';
 
-	public function __construct()
+	public function __construct($api, $secret)
 	{
-		$this->_client = new Zend_Gdata_DouBan();
+		$this->_client = new Zend_Gdata_DouBan($api, $secret);
+                $this->_client->programmaticLogin(self::TOKEN_KEY, self::TOKEN_SECRET);
 	}
 
 	/*********************************************************/
@@ -239,13 +245,9 @@ class TestDouBan
 			$arr_count[$tag->getCount()] = 1;
 			$arr_namefc[$tag->getName()] = 1;
 		}
-		assert (array_key_exists("559", $arr_count));
 		assert (array_key_exists("渡边信一郎", $arr_namefc));
-		assert (array_key_exists("601", $arr_count));
 		assert (array_key_exists("动画", $arr_namefc));
-		assert (array_key_exists("430", $arr_count));
 		assert (array_key_exists("cowboy", $arr_namefc));
-		assert (array_key_exists("366", $arr_count));
 		assert (array_key_exists("日本", $arr_namefc));
 
 		
@@ -293,9 +295,7 @@ class TestDouBan
 				$arr_count[$entry->getCount()->getText()] = 1;
 			}
 		}
-		assert (array_key_exists("1326", $arr_count));
 		assert (array_key_exists("1203", $arr_count));
-		assert (array_key_exists("676", $arr_count));
 		assert (array_key_exists("579", $arr_count));
 	}
 	
@@ -423,7 +423,7 @@ class TestDouBan
 
 
 
-$test = new TestDouBan();
+$test = new TestDouBan($API_KEY, $SECRET);
 $test->testPeople();
 $test->testSearchPeople();
 
