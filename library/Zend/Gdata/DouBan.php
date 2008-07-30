@@ -35,7 +35,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
         	$this->registerPackage('Zend_Gdata_DouBan');
 		$this->_client = new OAuthClient($api_key, $secret);
 		$this->_APIKey = $api_key;
-		parent::__construct($this->_client, $this->_APIKey);
+		parent::__construct(null, $this->_APIKey);
     	}
 	
 	//API authorization
@@ -49,7 +49,53 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		return $this->_client->login($token_key, $token_secret);
 	}
 	
-	public function Post()
+	public function getEntry($url = null, $classname = null)
+	{
+		$auth_header_arr = $this->_client->getAuthHeader('GET', $classname);
+		$auth_header = $auth_header_arr[0];
+		$header_str = $auth_header_arr[1];
+		if ($auth_header) {
+			if (stristr($url, '?')) {
+				$url = $url . '&' . $header_str;
+			} else {
+				$url = $url . '?' . $header_str;
+			}
+		} 
+	        else if ($this->_APIKey) {
+			$param = 'apikey=' . urlencode($this->_APIKey);
+			if (stristr($url, '?')) {
+				$url = $url . '&' . $param;
+			} else {
+				$url = $url . '?' . $param;
+			}
+		}
+		return parent::getEntry($url, $classname);
+	}
+	
+        public function getFeed($url = null, $classname = null)
+	{
+		$auth_header_arr = $this->_client->getAuthHeader('GET', $classname);
+		$auth_header = $auth_header_arr[0];
+		$header_str = $auth_header_arr[1];
+		if ($auth_header) {
+			if (stristr($url, '?')) {
+				$url = $url . '&' . $header_str;
+			} else {
+				$url = $url . '?' . $header_str;
+			}
+		} 
+	        else if ($this->_APIKey) {
+			$param = 'apikey=' . urlencode($this->_APIKey);
+			if (stristr($url, '?')) {
+				$url = $url . '&' . $param;
+			} else {
+				$url = $url . '?' . $param;
+			}
+		}
+		return parent::getFeed($url, $classname);
+	}
+	
+  	public function Post()
 	{//TODO
 
 	}
@@ -74,7 +120,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getEntry($url, 'Zend_Gdata_DouBan_PeopleEntry');
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_PeopleEntry');
 	}
 
 	public function getPeopleFeed($location = null)
@@ -86,7 +132,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_PeopleFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_PeopleFeed');
 	}
 	
 	public function searchPeople($queryText, $startIndex = null, $maxResults = null)
@@ -109,7 +155,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getEntry($url, 'Zend_Gdata_DouBan_BookEntry');
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_BookEntry');
 	}
 
 	public function getBookFeed($location = null)
@@ -121,7 +167,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_BookFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_BookFeed');
 	}
 	
 	public function searchBook($queryText, $startIndex = null, $maxResults = null)
@@ -154,7 +200,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getEntry($url, 'Zend_Gdata_DouBan_MusicEntry');
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_MusicEntry');
 	}
 
 	public function getMusicFeed($location = null)
@@ -166,7 +212,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_MusicFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_MusicFeed');
 	}
 	
 	public function searchMusic($queryText, $startIndex = null, $maxResults = null)
@@ -199,7 +245,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getEntry($url, 'Zend_Gdata_DouBan_MovieEntry');
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_MovieEntry');
 	}
 
 	public function getMovieFeed($location = null)
@@ -211,7 +257,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_MovieFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_MovieFeed');
 	}
 	
 	public function searchMovie($queryText, $startIndex = null, $maxResults = null)
@@ -240,7 +286,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		if (($subjectId != null) && ($category != null)) {
 			$url = self::SERVER_URL . "/" . $category . "/subject/" . $subjectId . "/tags";
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_TagFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_TagFeed');
 	}
 	
 	//review
@@ -253,7 +299,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getEntry($url, 'Zend_Gdata_DouBan_ReviewEntry');
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_ReviewEntry');
 	}
 	
 	public function getReviewFeed($location = null)
@@ -265,7 +311,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_ReviewFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_ReviewFeed');
 	}
 
 	public function getMyReview($myId = null, $location = null)
@@ -277,7 +323,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getFeed($url, 'Zend_Gdata_DouBan_ReviewFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_ReviewFeed');
 	}
 	
 	public function createReview()
@@ -310,7 +356,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return parent::getEntry($url, 'Zend_Gdata_DouBan_CollectionFeed');
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_CollectionFeed');
 
 	}
 	

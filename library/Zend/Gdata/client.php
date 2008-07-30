@@ -119,9 +119,9 @@ class OAuthClient
 	public function getAuthHeader($method = null, $uri = null, $parameters = null)
 	{
 		if ($this->_token) {
-			$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, $method, $uri, $paramters);
-		$oauth_request->sign_request($this->_mothod, $this->_consumer, $this->_token);
-		return $oauth_request->to_header();
+			$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, $method, $uri, $parameters);
+		$oauth_request->sign_request($this->_method, $this->_consumer, $this->_token);
+		return array($oauth_request->to_header(), $oauth_request->getString());
 		}
 	}
 
@@ -141,12 +141,12 @@ class OAuthClient
 
 }
 
-$API_KEY = '698805e0675f9cb33c9811a1361ed619';
-$SECRET = '4b3ef67ecd3ffe21';
-$client = new OAuthClient($key=$API_KEY, $secret=$SECRET);
-$client->login();
-$res = $client->accessResource(HttpRequest::METH_GET, 'http://api.douban.com/test?a=b&c=d');
-print "*********************\n";
-print $res;
-print "\n";
+#$API_KEY = '698805e0675f9cb33c9811a1361ed619';
+#$SECRET = '4b3ef67ecd3ffe21';
+#$client = new OAuthClient($key=$API_KEY, $secret=$SECRET);
+#$client->login();
+#$res = $client->accessResource(HttpRequest::METH_GET, 'http://api.douban.com/test?a=b&c=d');
+#print "*********************\n";
+#print $res;
+#print "\n";
 ?>

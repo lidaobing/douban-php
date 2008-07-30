@@ -171,6 +171,7 @@ class OAuthRequest {/*{{{*/
   private $parameters;
   private $http_method;
   private $http_url;
+  private $string;
   // for debug purposes
   public $base_string;
   public static $version = '1.0';
@@ -180,6 +181,7 @@ class OAuthRequest {/*{{{*/
     $this->parameters = $parameters;
     $this->http_method = $http_method;
     $this->http_url = $http_url;
+    $this->string = null;
   }/*}}}*/
 
 
@@ -377,6 +379,12 @@ class OAuthRequest {/*{{{*/
     foreach ($this->parameters as $k => $v) {
       if (substr($k, 0, 5) != "oauth") continue;
       $out .= ',' . OAuthUtil::urlencodeRFC3986($k) . '="' . OAuthUtil::urlencodeRFC3986($v) . '"';
+      $str = OAuthUtil::urlencodeRFC3986($k) . '=' . OAuthUtil::urlencodeRFC3986($v);
+      if ($this->string == null) {
+        $this->string = $str;
+      } else {
+        $this->string .= '&' . $str;
+      }
     }
     $total['Authorization'] = $out;
     return $total;
@@ -385,6 +393,9 @@ class OAuthRequest {/*{{{*/
   public function __toString() {/*{{{*/
     return $this->to_url();
   }/*}}}*/
+  public function getString() {
+    return $this->string;	
+  }
 
 
   public function sign_request($signature_method, $consumer, $token) {/*{{{*/
@@ -419,7 +430,7 @@ class OAuthRequest {/*{{{*/
    * util function for turning the Authorization: header into
    * parameters, has to do some unescaping
    */
-  private static function split_header($header) {/*{{{*/
+  public static function split_header($header) {/*{{{*/
     // remove 'OAuth ' at the start of a header 
     $header = substr($header, 6); 
 
