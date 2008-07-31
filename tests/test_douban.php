@@ -1,19 +1,13 @@
 <?php
 require_once 'DouBan.php';
 
-$API_KEY = '698805e0675f9cb33c9811a1361ed619';
-$SECRET = '4b3ef67ecd3ffe21';
-
 class TestDouBan
 {
 	protected $_client = null;
-        const TOKEN_KEY = '4c45a313637835afe4d0e93a2a68a10d';
-        const TOKEN_SECRET = '47ffe601bdffa302';
 
-	public function __construct($api, $secret)
+	public function __construct()
 	{
-		$this->_client = new Zend_Gdata_DouBan($api, $secret);
-                $this->_client->programmaticLogin(self::TOKEN_KEY, self::TOKEN_SECRET);
+		$this->_client = new Zend_Gdata_DouBan();
 	}
 
 	/*********************************************************/
@@ -423,7 +417,7 @@ class TestDouBan
 
 
 
-$test = new TestDouBan($API_KEY, $SECRET);
+$test = new TestDouBan();
 $test->testPeople();
 $test->testSearchPeople();
 
