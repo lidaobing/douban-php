@@ -39,7 +39,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
         	$this->registerPackage('Zend_Gdata_DouBan');
 		$this->_client = new OAuthClient($api_key, $secret);
 		$this->_APIKey = $api_key;
-		parent::__construct($this->_client, $this->_APIKey);
+		parent::__construct(NULL,  $this->_APIKey);
     	}
 	
 	//API authorization

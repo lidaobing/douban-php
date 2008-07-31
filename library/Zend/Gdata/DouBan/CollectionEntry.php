@@ -1,10 +1,10 @@
 <?php
 require_once 'Zend/Gdata.php';
 require_once 'Zend/Gdata/Entry.php';
-require_once 'DouBan/Extension/Rating.php';
-require_once 'DouBan/Extension/Tag.php';
-require_once 'DouBan/Extension/Status.php';
-require_once 'DouBan/Subject.php';
+require_once 'Zend/Gdata/DouBan/Extension/Rating.php';
+require_once 'Zend/Gdata/DouBan/Extension/Tag.php';
+require_once 'Zend/Gdata/DouBan/Extension/Status.php';
+require_once 'Zend/Gdata/DouBan/Subject.php';
 
 class Zend_Gdata_DouBan_CollectionEntry extends Zend_Gdata_App_Entry
 {

@@ -1,9 +1,8 @@
 <?php
 
 require_once 'OAuth.php';
-require_once 'Zend/Http/Client.php';
 
-class OAuthClient extends Zend_Http_Client
+class OAuthClient
 {
 	const REQUEST_TOKEN_URL = 'http://www.douban.com/service/auth/request_token';
 	const ACCESS_TOKEN_URL = 'http://www.douban.com/service/auth/access_token';
@@ -19,7 +18,6 @@ class OAuthClient extends Zend_Http_Client
 		$this->_server = $server;
 		$this->_consumer =  new OAuthConsumer($key, $secret);	
 		$this->_method = new OAuthSignatureMethod_PLAINTEXT();
-		parent::__construct();
 	}
 
 	public function login($key = NULL, $secret = NULL)

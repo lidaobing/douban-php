@@ -1,7 +1,7 @@
 <?php
 require_once 'Zend/Gdata.php';
 require_once 'Zend/Gdata/Entry.php';
-require_once 'DouBan/Extension/Count.php';
+require_once 'Zend/Gdata/DouBan/Extension/Count.php';
 
 class Zend_Gdata_DouBan_TagEntry extends Zend_Gdata_App_Entry
 {

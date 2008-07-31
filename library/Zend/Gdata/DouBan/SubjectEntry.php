@@ -1,9 +1,9 @@
 <?php
 require_once 'Zend/Gdata.php';
 require_once 'Zend/Gdata/Entry.php';
-require_once 'DouBan/Extension/Attribute.php';
-require_once 'DouBan/Extension/Rating.php';
-require_once 'DouBan/Extension/Tag.php';
+require_once 'Zend/Gdata/DouBan/Extension/Attribute.php';
+require_once 'Zend/Gdata/DouBan/Extension/Rating.php';
+require_once 'Zend/Gdata/DouBan/Extension/Tag.php';
 
 class Zend_Gdata_DouBan_SubjectEntry extends Zend_Gdata_App_Entry
 {

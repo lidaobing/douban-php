@@ -1,5 +1,5 @@
 <?php
-require_once 'DouBan.php';
+require_once 'Zend/Gdata/DouBan.php';
 
 $API_KEY = '698805e0675f9cb33c9811a1361ed619';
 $SECRET = '4b3ef67ecd3ffe21';
@@ -358,8 +358,8 @@ class TestDouBan
 	public function testCreateReview()
 	{
 		$bookEntry = $this->_client->getBook("1489401");
-		$entry = $this->_client->createReview("it's a little bad!", "it's very good good goodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgood", $bookEntry, "4");
-		assert ($entry->getTitle() == "it's a little bad!");
+		$entry = $this->_client->createReview("it's so so good!", "it's very good good goodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgood", $bookEntry, "4");
+		assert ($entry->getTitle() == "it's so so good!");
 	}
 	/***********************************************************/
 	public function testGetCollectionFeed()
@@ -429,26 +429,26 @@ class TestDouBan
 
 
 $test = new TestDouBan($API_KEY, $SECRET);
-#$test->testPeople();
-#$test->testSearchPeople();
-#
-#$test->testBook();
-#$test->testQueryBookByTag();
-#$test->testSearchBook();
-#
-#$test->testMusic();
-#$test->testQueryMusicByTag();
-#$test->testSearchMusic();
-#
-#$test->testMovie();
-#$test->testQueryMovieByTag();
-#$test->testSearchMovie();
-#
-#$test->testGetTagFeed();
-#
-#$test->testGetReview();
-#$test->testGetMyReview();
+$test->testPeople();
+$test->testSearchPeople();
+
+$test->testBook();
+$test->testQueryBookByTag();
+$test->testSearchBook();
+
+$test->testMusic();
+$test->testQueryMusicByTag();
+$test->testSearchMusic();
+
+$test->testMovie();
+$test->testQueryMovieByTag();
+$test->testSearchMovie();
+
+$test->testGetTagFeed();
+
+$test->testGetReview();
+$test->testGetMyReview();
 $test->testCreateReview();
-#
-#$test->testGetCollectionFeed();
+
+$test->testGetCollectionFeed();
 
