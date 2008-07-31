@@ -17,14 +17,15 @@ class Zend_Gdata_DouBan_Extension_Rating extends Zend_Gdata_Extension_Rating
         $this->_text = $text;
     }
     
-    public function getDOM($doc = null)
-    {
-	    $element = parent::getDOM($doc);
-	    if ($this->_name !== null) {
-		    $element->setAttribute('value', $this->_value);
-	    }
-	    return $element;
-    }  
+  #  public function getDOM($doc = null)
+  #  {
+  #          print "ratinggggggggggggggggggggg\n";
+  #          $element = parent::getDOM($doc);
+  #          if ($this->_value !== null) {
+  #      	    $element->setAttribute('value', $this->_value);
+  #          }
+  #          return $element;
+  #  }  
     
     protected function takeAttributeFromDOM($attribute)
     {

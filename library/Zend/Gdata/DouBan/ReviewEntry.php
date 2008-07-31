@@ -9,9 +9,9 @@ class Zend_Gdata_DouBan_ReviewEntry extends Zend_Gdata_App_Entry
 	protected $_entryClassName = 'Zend_Gdata_DouBan_ReviewEntry';
 	
 	protected $_rating = null;
-	protected $_subject = array();
+	protected $_subject = null;
 
-	public function __construct($element)
+	public function __construct($element = null)
 	{
 		
 		foreach (Zend_Gdata_DouBan::$namespaces as $nsPrefix => $nsUri) {
@@ -37,9 +37,9 @@ class Zend_Gdata_DouBan_ReviewEntry extends Zend_Gdata_App_Entry
 		$absoluteNodeName = $child->namespaceURI . ':' . $child->localName;
 		switch ($absoluteNodeName) {
 			case $this->lookupNamespace('db') . ':' . 'subject':
-				$attribute = new Zend_Gdata_DouBan_Subject();
-				$attribute->transferFromDOM($child);
-				$this->_subject = $attribute;
+				$subject = new Zend_Gdata_DouBan_Subject();
+				$subject->transferFromDOM($child);
+				$this->_subject = $subject;
 				break;
 			case $this->lookupNamespace('gd') . ':' . 'rating':
 				$rating = new Zend_Gdata_DouBan_Extension_Rating();
@@ -55,6 +55,7 @@ class Zend_Gdata_DouBan_ReviewEntry extends Zend_Gdata_App_Entry
 	public function setSubject($subject = null)
 	{
 		$this->_subject = $subject;
+		return $this;
 	}
 
 	public function getSubject()
@@ -65,6 +66,7 @@ class Zend_Gdata_DouBan_ReviewEntry extends Zend_Gdata_App_Entry
 	public function setRating($rating = null)
 	{
 		$this->_rating = $rating;
+		return $this;
 	}
 
 	public function getRating()

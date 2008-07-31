@@ -1,26 +1,28 @@
 <?php
 
 require_once 'OAuth.php';
+require_once 'Zend/Http/Client.php';
 
-class OAuthClient
+class OAuthClient extends Zend_Http_Client
 {
 	const REQUEST_TOKEN_URL = 'http://www.douban.com/service/auth/request_token';
 	const ACCESS_TOKEN_URL = 'http://www.douban.com/service/auth/access_token';
 	const AUTHORIZATION_URL = 'http://www.douban.com/service/auth/authorize';
 
-	protected $_server = null;
-	protected $_consumer = null;
-	protected $_token = null;
-	protected $_method = null;
+	protected $_server = NULL;
+	protected $_consumer = NULL;
+	protected $_token = NULL;
+	protected $_method = NULL;
 	
-	public function __construct($key = null, $secret = null, $server = 'http://www.douban.com')
+	public function __construct($key = NULL, $secret = NULL, $server = 'http://www.douban.com')
 	{
 		$this->_server = $server;
 		$this->_consumer =  new OAuthConsumer($key, $secret);	
 		$this->_method = new OAuthSignatureMethod_PLAINTEXT();
+		parent::__construct();
 	}
 
-	public function login($key = null, $secret = null)
+	public function login($key = NULL, $secret = NULL)
 	{
 		if ($key && $secret) {
 			$this->_token = new OAuthToken($key, $secret);
@@ -54,7 +56,7 @@ class OAuthClient
 		}
 	}
 	
-	public function parse($content = null) 
+	public function parse($content = NULL) 
 	{
 		$arr = explode("&", $content);
 		$size = sizeof($arr);
@@ -64,7 +66,7 @@ class OAuthClient
 			$secret = explode("=", $arr[0]);
 			$result["oauth_token"] = $token[1];
 			$result["oauth_token_secret"] = $secret[1];
-			$result["douban_user_id"] = null;
+			$result["douban_user_id"] = NULL;
 		} else if ($size == 3) {
 			$token = explode("=", $arr[1]);
 			$secret = explode("=", $arr[0]);
@@ -76,7 +78,7 @@ class OAuthClient
 		return $result;
 	}
 
-	public function fetchToken($oauth_request = null)
+	public function fetchToken($oauth_request = NULL)
 	{
 		$http_request = new HttpRequest($oauth_request->http_url(), HttpRequest::METH_GET);
 		$http_request->addHeaders($oauth_request->to_header());
@@ -93,7 +95,7 @@ class OAuthClient
 		return $this->fetchToken($oauth_request);
 	}
 
-	public function getAuthorizationUrl($key = null, $secret = null, $callback = null)
+	public function getAuthorizationUrl($key = NULL, $secret = NULL, $callback = NULL)
 	{
 		$parameters = array();
 		$parameters["oauth_token"] = $key;
@@ -106,7 +108,7 @@ class OAuthClient
 		return $oauth_request->to_url();
 	}
 
-	public function getAccessToken($key = null, $secret = null, $token = null)
+	public function getAccessToken($key = NULL, $secret = NULL, $token = NULL)
 	{
 		if ($key && $secret) {
 			$token = new OAuthToken($key, $secret);
@@ -116,7 +118,7 @@ class OAuthClient
 		return $this->fetchToken($oauth_request);
 	}
 
-	public function getAuthHeader($method = null, $uri = null, $parameters = null)
+	public function getAuthHeader($method = NULL, $uri = NULL, $parameters = NULL)
 	{
 		if ($this->_token) {
 			$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, $method, $uri, $parameters);
@@ -125,9 +127,9 @@ class OAuthClient
 		}
 	}
 
-	public function accessResource($method = null, $url = null)
+	public function accessResource($method = NULL, $url = NULL)
 	{
-		$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, null, $url);
+		$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, NULL, $url);
 		$oauth_request->sign_request($this->_method, $this->_consumer, $this->_token);
 		$headers = $oauth_request->to_header();
 		if (($method == 'POST')||($method == 'PUT')) {

@@ -25,15 +25,17 @@ class Zend_Gdata_DouBan_SubjectEntry extends Zend_Gdata_App_Entry
 	public function getDOM($doc = null)
 	{
 		$element = parent::getDOM($doc);
-		if ($this->_attribute != null) {
-		//TODO
-		}
+	#	if ($this->_attribute != null) {
+		#	var_dump($this->_attribute instanceof Zend_Gdata_DouBan_Extension_Attribute);
+	#		var_dump($this->_attribute instanceof array);
+	#		$element->appendChild($this->_attribute->getDOM($element->ownerDocument));
+	#	}
 		if ($this->_rating != null) {
 			$element->appendChild($this->_rating->getDOM($element->ownerDocument));
 		}
-		if ($this->_tag != null) {
-			$element->appendChild($this->_tag->getDOM($element->ownerDocument));
-		}
+	#	if ($this->_tag != null) {
+	#		$element->appendChild($this->_tag->getDOM($element->ownerDocument));
+	#	}
 		
 		return $element;
 	}
