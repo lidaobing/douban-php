@@ -1,13 +1,19 @@
 <?php
 require_once 'DouBan.php';
 
+$API_KEY = '698805e0675f9cb33c9811a1361ed619';
+$SECRET = '4b3ef67ecd3ffe21';
+
 class TestDouBan
 {
 	protected $_client = null;
+        const TOKEN_KEY = '4c45a313637835afe4d0e93a2a68a10d';
+        const TOKEN_SECRET = '47ffe601bdffa302';
 
-	public function __construct()
+	public function __construct($api, $secret)
 	{
-		$this->_client = new Zend_Gdata_DouBan();
+		$this->_client = new Zend_Gdata_DouBan($api, $secret);
+                $this->_client->programmaticLogin(self::TOKEN_KEY, self::TOKEN_SECRET);
 	}
 
 	/*********************************************************/
@@ -15,7 +21,6 @@ class TestDouBan
 	{
 		$peopleEntry = $this->_client->getPeople('ahbei');
 		assert ($peopleEntry->getId() == 'http://api.douban.com/people/1000001');
-		
 		assert ($peopleEntry->getLocation()->getText() == '北京');
 		assert ($peopleEntry->getTitle()->getText() == '阿北');
 	}
@@ -350,6 +355,12 @@ class TestDouBan
 		assert (array_key_exists("伪书一号", $arr_title));
 	}
 
+	public function testCreateReview()
+	{
+		$bookEntry = $this->_client->getBook("1489401");
+		$entry = $this->_client->createReview("it's a little bad!", "it's very good good goodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgood", $bookEntry, "4");
+		assert ($entry->getTitle() == "it's a little bad!");
+	}
 	/***********************************************************/
 	public function testGetCollectionFeed()
 	{
@@ -417,26 +428,27 @@ class TestDouBan
 
 
 
-$test = new TestDouBan();
-$test->testPeople();
-$test->testSearchPeople();
-
-$test->testBook();
-$test->testQueryBookByTag();
-$test->testSearchBook();
-
-$test->testMusic();
-$test->testQueryMusicByTag();
-$test->testSearchMusic();
-
-$test->testMovie();
-$test->testQueryMovieByTag();
-$test->testSearchMovie();
-
-$test->testGetTagFeed();
-
-$test->testGetReview();
-$test->testGetMyReview();
-
-$test->testGetCollectionFeed();
+$test = new TestDouBan($API_KEY, $SECRET);
+#$test->testPeople();
+#$test->testSearchPeople();
+#
+#$test->testBook();
+#$test->testQueryBookByTag();
+#$test->testSearchBook();
+#
+#$test->testMusic();
+#$test->testQueryMusicByTag();
+#$test->testSearchMusic();
+#
+#$test->testMovie();
+#$test->testQueryMovieByTag();
+#$test->testSearchMovie();
+#
+#$test->testGetTagFeed();
+#
+#$test->testGetReview();
+#$test->testGetMyReview();
+$test->testCreateReview();
+#
+#$test->testGetCollectionFeed();
 
