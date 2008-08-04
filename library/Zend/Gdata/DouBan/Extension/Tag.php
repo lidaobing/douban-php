@@ -24,8 +24,8 @@ class Zend_Gdata_DouBan_Extension_Tag extends Zend_Gdata_Extension
 	    if ($this->_name !== null) {
 		    $element->setAttribute('name', $this->_name);
 	    }
-	    if ($this->_index !== null) {
-		    $element->setAttribute('count', $this->_index);
+	    if ($this->_count !== null) {
+		    $element->setAttribute('count', $this->_count);
 	    }
 	    return $element;
     }  

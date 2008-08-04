@@ -1,10 +1,10 @@
 <?php
 require_once 'Zend/Gdata.php';
 require_once 'Zend/Gdata/Entry.php';
-require_once 'Zend/Gdata/DouBan/Extension/Rating.php';
-require_once 'Zend/Gdata/DouBan/Extension/Tag.php';
-require_once 'Zend/Gdata/DouBan/Extension/Status.php';
-require_once 'Zend/Gdata/DouBan/Subject.php';
+require_once 'DouBan/Extension/Rating.php';
+require_once 'DouBan/Extension/Tag.php';
+require_once 'DouBan/Extension/Status.php';
+require_once 'DouBan/Subject.php';
 
 class Zend_Gdata_DouBan_CollectionEntry extends Zend_Gdata_App_Entry
 {
@@ -16,7 +16,7 @@ class Zend_Gdata_DouBan_CollectionEntry extends Zend_Gdata_App_Entry
 	protected $_tag = array();
 
 
-	public function __construct($element)
+	public function __construct($element = NULL)
 	{
 		
 		foreach (Zend_Gdata_DouBan::$namespaces as $nsPrefix => $nsUri) {
@@ -38,9 +38,11 @@ class Zend_Gdata_DouBan_CollectionEntry extends Zend_Gdata_App_Entry
 			$element->appendChild($this->_status->getDOM($element->ownerDocument));
 		}
 		if ($this->_tag != null) {
-			$element->appendChild($this->_tag->getDOM($element->ownerDocument));
+            		foreach ($this->_tag as $tag) {
+                		$element->appendChild($tag->getDOM($element->ownerDocument));
+            		}
 		}
-		
+
 		return $element;
 	}
 	protected function takeChildFromDOM($child)

@@ -45,7 +45,7 @@ class Zend_Gdata_DouBan_Extension_Rating extends Zend_Gdata_Extension_Rating
     
     public function setValue($lang)
     {
-	$this->_lang = $value;
+	$this->_value = $value;
     }
 
     

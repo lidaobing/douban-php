@@ -1,9 +1,9 @@
 <?php
 require_once 'Zend/Gdata.php';
 require_once 'Zend/Gdata/Entry.php';
-require_once 'Zend/Gdata/DouBan/Extension/Attribute.php';
-require_once 'Zend/Gdata/DouBan/Extension/Rating.php';
-require_once 'Zend/Gdata/DouBan/Extension/Tag.php';
+require_once 'DouBan/Extension/Attribute.php';
+require_once 'DouBan/Extension/Rating.php';
+require_once 'DouBan/Extension/Tag.php';
 
 class Zend_Gdata_DouBan_SubjectEntry extends Zend_Gdata_App_Entry
 {
@@ -25,17 +25,21 @@ class Zend_Gdata_DouBan_SubjectEntry extends Zend_Gdata_App_Entry
 	public function getDOM($doc = null)
 	{
 		$element = parent::getDOM($doc);
-	#	if ($this->_attribute != null) {
-		#	var_dump($this->_attribute instanceof Zend_Gdata_DouBan_Extension_Attribute);
-	#		var_dump($this->_attribute instanceof array);
-	#		$element->appendChild($this->_attribute->getDOM($element->ownerDocument));
-	#	}
+		if ($this->_attribute != null) {
+            		foreach ($this->_attribute as $attribute) {
+                		$element->appendChild($attribute->getDOM($element->ownerDocument));
+            		}
+        	}
+
 		if ($this->_rating != null) {
 			$element->appendChild($this->_rating->getDOM($element->ownerDocument));
 		}
-	#	if ($this->_tag != null) {
-	#		$element->appendChild($this->_tag->getDOM($element->ownerDocument));
-	#	}
+		
+		if ($this->_tag != null) {
+			foreach ($this->_tag as $tag) {
+				$element->appendChild($this->_tag->getDOM($element->ownerDocument));
+			}
+		}
 		
 		return $element;
 	}

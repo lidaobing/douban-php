@@ -1,14 +1,15 @@
 <?php
-require_once 'Zend/Gdata/DouBan.php';
-
-$API_KEY = '698805e0675f9cb33c9811a1361ed619';
-$SECRET = '4b3ef67ecd3ffe21';
+require_once 'DouBan.php';
+//Change to your own API_KEY and SECRET
+$API_KEY = '';
+$SECRET = '';
 
 class TestDouBan
 {
 	protected $_client = null;
-        const TOKEN_KEY = '4c45a313637835afe4d0e93a2a68a10d';
-        const TOKEN_SECRET = '47ffe601bdffa302';
+	//change to your own TOKEN_KEY and TOKEN_SECRET
+        const TOKEN_KEY = '';
+        const TOKEN_SECRET = '';
 
 	public function __construct($api, $secret)
 	{
@@ -358,9 +359,13 @@ class TestDouBan
 	public function testCreateReview()
 	{
 		$bookEntry = $this->_client->getBook("1489401");
-		$entry = $this->_client->createReview("it's so so good!", "it's very good good goodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgoodgood", $bookEntry, "4");
-		assert ($entry->getTitle() == "it's so so good!");
+		$entry = $this->_client->createReview("you can not see this comment", "this book is very good this book is very good this book is very good this book is very good this book is very good this book is very good this book is very good ", $bookEntry, "4");
+		assert ($entry->getTitle() == "you can not see this comment");
+		$entry = $this->_client->updateReview($entry, "you can see this is good", "this is for test this is for test this is for test this is for test this is for test this is for test this is for test this is for test ", "3");
+		assert ($entry->getTitle() == "you can see this");
+		$this->_client->deleteReview($entry);
 	}
+
 	/***********************************************************/
 	public function testGetCollectionFeed()
 	{
@@ -422,6 +427,33 @@ class TestDouBan
 		assert(array_key_exists("Harper Perennial", $arr_subject_name));
 		
 	}
+
+	public function testCollection()
+	{        
+        	$subject = $this->_client->getBook("1489401");
+                $tagArr = $subject->getTag();
+                $subTag = $tagArr[0];
+
+                $tag = array("nice", "安徒生");
+                $entry = $this->_client->addCollection("wish", $subject, NULL, $tag);
+                assert ($entry->getStatus()->getText() == "wish");
+                assert (count($entry->getTag()) == 2);
+                $tagArr = $entry->getTag();
+                assert ($tagArr[0]->getName() == "nice");
+                assert ($tagArr[1]->getName() == "安徒生");
+
+		$entry = $this->_client->getCollection($entry->getId()->getText());
+
+	        assert ($entry->getStatus()->getText() == "wish");
+        	assert (count($entry->getTag()) == 2);
+                $tag = array("ggnice", "安徒生");
+        	$entry = $this->_client->updateCollection($entry, "read", $tag, "3");
+   		$tagArr = $entry->getTag();
+		assert ($tagArr[0]->getName() == "ggnice");
+		assert ($tagArr[1]->getName() == "安徒生");
+
+        	$this->_client->deleteCollection($entry);		
+	}
 }
 
 
@@ -450,5 +482,7 @@ $test->testGetReview();
 $test->testGetMyReview();
 $test->testCreateReview();
 
+$test->testCollection();
+#
 $test->testGetCollectionFeed();
 

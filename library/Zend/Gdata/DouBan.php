@@ -1,5 +1,4 @@
 <?php
-
 require_once 'Zend/Gdata.php';
 require_once 'Zend/Gdata/App/Extension/Title.php';
 require_once 'Zend/Gdata/App/Extension/Content.php';
@@ -33,36 +32,35 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		'gd' => 'http://schemas.google.com/g/2005',
 	);
 	
-	public function __construct($api_key = NULL, $secret = NULL)
+	public function __construct($apiKey = NULL, $secret = NULL)
     	{
-		//FIXME
         	$this->registerPackage('Zend_Gdata_DouBan');
-		$this->_client = new OAuthClient($api_key, $secret);
-		$this->_APIKey = $api_key;
-		parent::__construct(NULL,  $this->_APIKey);
+		$this->_client = new OAuthClient($apiKey, $secret);
+		$this->_APIKey = $apiKey;
+		parent::__construct($this->_client, $this->_APIKey);
     	}
 	
 	//API authorization
-	public function getAuthorizationURL($api_key = NULL, $secret = NULL, $callback = NULL)
+	public function getAuthorizationURL($apiKey = NULL, $secret = NULL, $callback = NULL)
 	{
-		return $this->_client->getAuthorizationUrl($api_key, $secret, $callback);
+		return $this->_client->getAuthorizationUrl($apiKey, $secret, $callback);
 	}
 	
-	public function programmaticLogin($token_key = NULL, $token_secret = NULL)
+	public function programmaticLogin($tokenKey = NULL, $tokenSecret = NULL)
 	{
-		return $this->_client->login($token_key, $token_secret);
+		return $this->_client->login($tokenKey, $tokenSecret);
 	}
 	
-	public function getEntry($url = NULL, $classname = NULL)
+	public function getEntry($url = NULL, $className = NULL)
 	{
-		$auth_header_arr = $this->_client->getAuthHeader('GET', $url);
-		$auth_header = $auth_header_arr[0];
-		$header_str = $auth_header_arr[1];
-		if ($auth_header) {
+		$authHeaderArr = $this->_client->getAuthHeader('GET', $url);
+		$authHeader = $authHeaderArr[0];
+		$headerStr = $authHeaderArr[1];
+		if ($authHeader) {
 			if (stristr($url, '?')) {
-				$url = $url . '&' . $header_str;
+				$url = $url . '&' . $headerStr;
 			} else {
-				$url = $url . '?' . $header_str;
+				$url = $url . '?' . $headerStr;
 			}
 		} 
 	        else if ($this->_APIKey) {
@@ -73,19 +71,19 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 				$url = $url . '?' . $param;
 			}
 		}
-		return parent::getEntry($url, $classname);
+		return parent::getEntry($url, $className);
 	}
 	
-        public function getFeed($url = NULL, $classname = NULL)
+        public function getFeed($url = NULL, $className = NULL)
 	{
-		$auth_header_arr = $this->_client->getAuthHeader('GET', $url);
-		$auth_header = $auth_header_arr[0];
-		$header_str = $auth_header_arr[1];
-		if ($auth_header) {
+		$authHeaderArr = $this->_client->getAuthHeader('GET', $url);
+		$authHeader = $authHeaderArr[0];
+		$headerStr = $authHeaderArr[1];
+		if ($authHeader) {
 			if (stristr($url, '?')) {
-				$url = $url . '&' . $header_str;
+				$url = $url . '&' . $headerStr;
 			} else {
-				$url = $url . '?' . $header_str;
+				$url = $url . '?' . $headerStr;
 			}
 		} 
 	        else if ($this->_APIKey) {
@@ -96,36 +94,47 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 				$url = $url . '?' . $param;
 			}
 		}
-		return parent::getFeed($url, $classname);
+		return parent::getFeed($url, $className);
 	}
 	
-  	public function Post($data = NULL, $url = NULL, $content_type = NULL, $extra_headers = NULL, $parameters = NULL)
+	public function post($data, $uri = null, $remainingRedirects = null, $contentType = null, $extraHeaders = null) 
 	{
-		if ($extra_headers == NULL) {
-			$extra_headers = array();
+		if ($extraHeaders == NULL) {
+			$extraHeaders = array();
 		}
-		$extra_headers_arr = $this->_client->getAuthHeader('POST', $url);
-		$extra_headers = $extra_headers_arr[0];
-		$header_str = $extra_headers_arr[1];
-		$url = self::SERVER_URL . $url;
-		$http_request = new HttpRequest($url, HttpRequest::METH_POST);
-		$http_request->setRawPostData($data->saveXML());
-		$http_request->addHeaders($extra_headers);
-		$http_request->setContentType($content_type);
-		$http_request->send();
-		$result = new Zend_Gdata_DouBan_ReviewEntry();
-		$result->transferFromXML($http_request->getResponseBody());
-		return $result;
+		$HeadersArr = $this->_client->getAuthHeader('POST', $uri);
+		$Headers = $HeadersArr[0];
+		$tmp = array();
+		$tmp = array_merge($Headers, $extraHeaders);
+		$extraHeaders = $tmp;
+		return parent::post($data, $uri, $remainingRedirects, $contentType, $extraHeaders);
 	}
 	
-	public  function Put()
-	{//TODO
+	public function put($data, $url = NULL, $remainingRedirects = null, $contentType = null, $extraHeaders = null)
+	{
+		 if ($extraHeaders == NULL) {
+                        $extraHeaders = array();
+                }
+                $HeadersArr = $this->_client->getAuthHeader('PUT', $url);
+                $Headers = $HeadersArr[0];
+                $tmp = array();
+                $tmp = array_merge($Headers, $extraHeaders);
+                $extraHeaders = $tmp;
+		return parent::put($data, $url, $remainingRedirects, $contentType, $extraHeaders);
+	}
+	
+	public  function delete($url)
+	{
+		$extraHeadersArr = $this->_client->getAuthHeader('DELETE', $url);
+                $extraHeaders = $extraHeadersArr[0];
+                $headerStr = $extraHeadersArr[1];
+		if (stristr($url, '?')) {
+			$url = $url . '&' . $headerStr;
+		} else {
+			$url = $url . '?' . $headerStr;
+		}
+		$response = parent::delete($url);
 
-	}
-	
-	public  function Cut()
-	{//TODO
-	 //delete is a key word!
 	}
 
 	//people	
@@ -346,37 +355,65 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	
 	public function createReview($title = NULL, $content = NULL, $subject = NULL, $rating = NULL)
 	{
-		$sub_id =  $subject->getId();
-		$sub_rating =  $subject->getRating();
+		$subId =  $subject->getId();
+		$subRating =  $subject->getRating();
 		$subject = new Zend_Gdata_DouBan_Subject();
-		$subject->setId($sub_id);
-		$subject->setRating($sub_rating);
+		$subject->setId($subId);
+		$subject->setRating($subRating);
 		$entry = new Zend_Gdata_DouBan_ReviewEntry();
-		$rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
 		$entry->setSubject($subject);
 		if ($rating) {
+			$rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
 			$entry->setRating($rating);
 		}
 		$title = new Zend_Gdata_App_Extension_Title($title);
 		$content = new Zend_Gdata_App_Extension_Content($content);
 		$entry->setContent($content);
 		$entry->setTitle($title);
-		return $this->Post($entry, "/reviews", "application/atom+xml; charset=utf-8");
+		$url = self::SERVER_URL . "/reviews";
+		$response =  $this->post($entry, $url, NULL, "application/atom+xml; charset=utf-8");
+                $result = new Zend_Gdata_DouBan_ReviewEntry();
+                $result->transferFromXML($response->getBody());
+                return $result;
+
 	}
 
-	public function updateReview()
-	{//TODO
+	public function updateReview($entry = NULL, $title = NULL, $content = NULL, $rating = NULL)
+	{
+		$title = new Zend_Gdata_App_Extension_Title($title);
+                $content = new Zend_Gdata_App_Extension_Content($content);
+                $entry->setContent($content);
+                $entry->setTitle($title);
+		if ($rating) {
+			$rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
+                        $entry->setRating($rating);
+                }
+		$response =  $this->put($entry, $entry->getId()->getText(), NULL, "application/atom+xml; charset=utf-8");
+		$result = new Zend_Gdata_DouBan_ReviewEntry();
+                $result->transferFromXML($response->getBody());
+		return $result;
 
 	}
 	
-	public function deleteReview()
-	{//TODO
-
+	public function deleteReview($entry)
+	{
+		$url = $entry->getId()->getText();
+		return $this->delete($url);
 	}
 
 	//collection
-	public function getCollection()
-	{//TODO
+#	public function getCollection($collectionId = NULL, $location = NULL)
+#	{
+	public function getCollection($url = NULL)
+	{
+		#if ($collectionId !== NULL) {
+                #        $url = self::SERVER_URL . "/collection/" . $collectionId;
+                #} else if ($location instanceof Zend_Gdata_Query) {
+                #        $url = $location->getQueryUrl();
+                #} else {
+                #        $url = $location;
+                #}
+                return $this->getEntry($url, 'Zend_Gdata_DouBan_CollectionEntry');
 
 	}
 	
@@ -393,24 +430,64 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 
 	}
 	
-	public function getMyCollection()
-	{//TODO
+	public function addCollection($status = NULL, $subject = NULL, $rating = NULL, $tags = array())
+	{
+		$subId =  $subject->getId();
+		$subject = new Zend_Gdata_DouBan_Subject();
+                $subject->setId($subId);
+                $entry = new Zend_Gdata_DouBan_CollectionEntry();
+                $entry->setSubject($subject);
+		if ($rating) {
+                        $rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
+                        $entry->setRating($rating);
+                }
+		$tagArr = array();
+		foreach ($tags as $tag) {
+			$obj = new Zend_Gdata_DouBan_Extension_Tag();
+			$obj->setName($tag);
+			$tagArr[] = $obj;
+		}
+		$status = new Zend_Gdata_DouBan_Extension_Status($status);
+		$entry->setStatus($status);
+		$entry->setTag($tagArr);
+		$url = self::SERVER_URL . "/collection";
+		$response = $this->post($entry, $url, NULL, "application/atom+xml; charset=utf-8");
+		$result = new Zend_Gdata_DouBan_CollectionEntry();
+		$result->transferFromXML($response->getRawBody());
+		return $result;
 
 	}
 	
-	public function addCollection()
-	{//TODO
+	public function updateCollection($entry = NULL, $status = NULL, $tags = array(), $rating = NULL)
+	{
+		$status = new Zend_Gdata_DouBan_Extension_Status($status);
+		$entry->setStatus($status);
+		if ($rating) {
+			$rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
+                        $entry->setRating($rating);
+		}
+		if ($tags) {
+			$tagArr = array();
+         	       	foreach ($tags as $tag) {
+                        	$obj = new Zend_Gdata_DouBan_Extension_Tag();
+                        	$obj->setName($tag);
+                        	$tagArr[] = $obj;
+                	}
+			$entry->setTag($tagArr);
+	
+		}
+		$response =  $this->put($entry, $entry->getId()->getText(), NULL,  "application/atom+xml; charset=utf-8");
+                $result = new Zend_Gdata_DouBan_CollectionEntry();
+                $result->transferFromXML($response->getBody());
+                return $result;
+
 
 	}
 	
-	public function updateCollection()
-	{//TODO
-
-	}
-	
-	public function deleteCollection()
-	{//TODO
-
+	public function deleteCollection($entry = NULL)
+	{
+		$url = $entry->getId()->getText();
+                return $this->delete($url);
 	}
 }
 ?>

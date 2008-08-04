@@ -1,8 +1,9 @@
 <?php
 
 require_once 'OAuth.php';
+require_once 'Zend/Http/Client.php';
 
-class OAuthClient
+class OAuthClient extends Zend_Http_Client
 {
 	const REQUEST_TOKEN_URL = 'http://www.douban.com/service/auth/request_token';
 	const ACCESS_TOKEN_URL = 'http://www.douban.com/service/auth/access_token';
@@ -18,6 +19,7 @@ class OAuthClient
 		$this->_server = $server;
 		$this->_consumer =  new OAuthConsumer($key, $secret);	
 		$this->_method = new OAuthSignatureMethod_PLAINTEXT();
+		parent::__construct();
 	}
 
 	public function login($key = NULL, $secret = NULL)
@@ -76,21 +78,21 @@ class OAuthClient
 		return $result;
 	}
 
-	public function fetchToken($oauth_request = NULL)
+	public function fetchToken($oauthRequest = NULL)
 	{
-		$http_request = new HttpRequest($oauth_request->http_url(), HttpRequest::METH_GET);
-		$http_request->addHeaders($oauth_request->to_header());
-		$http_request->send();
-		$r = $http_request->getResponsebody();
+		$httpRequest = new HttpRequest($oauthRequest->http_url(), HttpRequest::METH_GET);
+		$httpRequest->addHeaders($oauthRequest->to_header());
+		$httpRequest->send();
+		$r = $httpRequest->getResponsebody();
 		return $this->parse($r);
 		
 	}
 
 	public function getRequestToken()
 	{
-		$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, NULL, NULL, self::REQUEST_TOKEN_URL);
-		$oauth_request->sign_request($this->_method, $this->_consumer, NULL);
-		return $this->fetchToken($oauth_request);
+		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, NULL, NULL, self::REQUEST_TOKEN_URL);
+		$oauthRequest->sign_request($this->_method, $this->_consumer, NULL);
+		return $this->fetchToken($oauthRequest);
 	}
 
 	public function getAuthorizationUrl($key = NULL, $secret = NULL, $callback = NULL)
@@ -99,11 +101,11 @@ class OAuthClient
 		$parameters["oauth_token"] = $key;
  		if ($callback) {
 			$parameters["oauth_callback"] = $callback;
-			$oauth_request = new OAuthRequest('GET', self::AUTHORIZATION_URL, $parameters);
+			$oauthRequest = new OAuthRequest('GET', self::AUTHORIZATION_URL, $parameters);
 		} else {
-			$oauth_request = new OAuthRequest('GET', self::AUTHORIZATION_URL, $parameters);
+			$oauthRequest = new OAuthRequest('GET', self::AUTHORIZATION_URL, $parameters);
 		}
-		return $oauth_request->to_url();
+		return $oauthRequest->to_url();
 	}
 
 	public function getAccessToken($key = NULL, $secret = NULL, $token = NULL)
@@ -111,38 +113,38 @@ class OAuthClient
 		if ($key && $secret) {
 			$token = new OAuthToken($key, $secret);
 		}
-		$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $token, NULL, self::ACCESS_TOKEN_URL);
-		$oauth_request->sign_request($this->_method, $this->_consumer, $token);
-		return $this->fetchToken($oauth_request);
+		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $token, NULL, self::ACCESS_TOKEN_URL);
+		$oauthRequest->sign_request($this->_method, $this->_consumer, $token);
+		return $this->fetchToken($oauthRequest);
 	}
 
 	public function getAuthHeader($method = NULL, $uri = NULL, $parameters = NULL)
 	{
 		if ($this->_token) {
-			$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, $method, $uri, $parameters);
-		$oauth_request->sign_request($this->_method, $this->_consumer, $this->_token);
-		return array($oauth_request->to_header(), $oauth_request->getString());
+			$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, $method, $uri, $parameters);
+		$oauthRequest->sign_request($this->_method, $this->_consumer, $this->_token);
+		return array($oauthRequest->to_header(), $oauthRequest->getString());
 		}
 	}
 
 	public function accessResource($method = NULL, $url = NULL)
 	{
-		$oauth_request = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, NULL, $url);
-		$oauth_request->sign_request($this->_method, $this->_consumer, $this->_token);
-		$headers = $oauth_request->to_header();
+		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, NULL, $url);
+		$oauthRequest->sign_request($this->_method, $this->_consumer, $this->_token);
+		$headers = $oauthRequest->to_header();
 		if (($method == 'POST')||($method == 'PUT')) {
 			$headers['Content-Type'] = 'application/atom+xml; charset=utf-8';
 		}
-		$http_request = new HttpRequest($url, $method);
-		$http_request->setHeaders($headers);
-		$http_request->send();
-		return $http_request->getResponseBody();
+		$httpRequest = new HttpRequest($url, $method);
+		$httpRequest->setHeaders($headers);
+		$httpRequest->send();
+		return $httpRequest->getResponseBody();
 	}
 
 }
 
-#$API_KEY = '698805e0675f9cb33c9811a1361ed619';
-#$SECRET = '4b3ef67ecd3ffe21';
+#$API_KEY = '';
+#$SECRET = '';
 #$client = new OAuthClient($key=$API_KEY, $secret=$SECRET);
 #$client->login();
 #$res = $client->accessResource(HttpRequest::METH_GET, 'http://api.douban.com/test?a=b&c=d');
