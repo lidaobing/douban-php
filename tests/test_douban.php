@@ -1,15 +1,14 @@
 <?php
-require_once 'DouBan.php';
-//Change to your own API_KEY and SECRET
-$API_KEY = '';
-$SECRET = '';
+require_once 'Zend/Gdata/DouBan.php';
+
+$API_KEY = '698805e0675f9cb33c9811a1361ed619';
+$SECRET = '4b3ef67ecd3ffe21';
 
 class TestDouBan
 {
 	protected $_client = null;
-	//change to your own TOKEN_KEY and TOKEN_SECRET
-        const TOKEN_KEY = '';
-        const TOKEN_SECRET = '';
+        const TOKEN_KEY = '4c45a313637835afe4d0e93a2a68a10d';
+        const TOKEN_SECRET = '47ffe601bdffa302';
 
 	public function __construct($api, $secret)
 	{
