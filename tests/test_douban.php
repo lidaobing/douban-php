@@ -8,8 +8,8 @@ class TestDouBan
 {
 	protected $_client = null;
 	//Add your own TOKEN_KEY and TOKEN_SECRET
-        const TOKEN_KEY = '4c45a313637835afe4d0e93a2a68a10d';
-        const TOKEN_SECRET = '47ffe601bdffa302';
+        const TOKEN_KEY = '';
+        const TOKEN_SECRET = '';
 
 	public function __construct($api, $secret)
 	{
