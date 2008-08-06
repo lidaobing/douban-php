@@ -8,7 +8,7 @@ class TestDouBan
 {
 	protected $_client = null;
 	//Add your own TOKEN_KEY and TOKEN_SECRET
-        const TOKEN_KEY = '';
+	const TOKEN_KEY = '';
         const TOKEN_SECRET = '';
 
 	public function __construct($api, $secret)
@@ -28,7 +28,7 @@ class TestDouBan
 	
 	public function testSearchPeople()
 	{
-		$peopleFeed = $this->_client->searchPeople('ahbei', 2, 4);
+		$peopleFeed = $this->_client->searchPeople('boy', 2, 10);
 		$arr = $peopleFeed->getEntry();
 		$arr_title = array();
 		foreach ($arr as $entry) {
@@ -36,9 +36,42 @@ class TestDouBan
 				$arr_title[$entry->getTitle()->getText()] = 1;
 			}
 		}
-		assert (array_key_exists('阿北', $arr_title));
+		assert (array_key_exists('cow-boy', $arr_title));
 	}
 	
+	public function testAuthorizedUid()
+	{
+		$peopleEntry = $this->_client->getAuthorizedUid();
+		assert ($peopleEntry->getUid()->getText() == "2463802");
+	}
+
+	public function testGetFriends()
+	{
+		$peopleFeed = $this->_client->GetFriends("2463802");
+		$arr = $peopleFeed->getEntry();
+		$uid_arr = array();
+		foreach ($arr as $entry) {
+			if ($entry->getUid()) {
+				$uid_arr[$entry->getUid()->getText()] = 1;
+			}
+		}
+		assert (array_key_exists("jili8", $uid_arr));
+	}
+
+	public function testGetContacts()
+	{
+		$peopleFeed = $this->_client->GetContacts("2463802");
+		$arr = $peopleFeed->getEntry();
+		$uid_arr = array();
+		foreach ($arr as $entry) {
+			if ($entry->getUid()) {
+				$uid_arr[$entry->getUid()->getText()] = 1;
+			}
+		}
+		assert (array_key_exists("youha", $uid_arr));
+	}
+	
+
 	/***********************************************************/	
 	public function testBook()
 	{
@@ -355,6 +388,17 @@ class TestDouBan
 		assert (array_key_exists("看自己的妻子长大", $arr_title));
 		assert (array_key_exists("伪书一号", $arr_title));
 	}
+	public function testGetReviewFeed()
+	{
+		$feed = $this->_client->getReviewFeed("1489401", "book");
+		$arr_title = array();
+		foreach ($feed->getEntry() as $entry) {
+                        if ($entry->getTitle()) {
+                                $arr_title[$entry->getTitle()->getText()] = 1;
+                        }
+		}
+		assert (array_key_exists("good", $arr_title));
+	}
 
 	public function testCreateReview()
 	{
@@ -362,7 +406,7 @@ class TestDouBan
 		$entry = $this->_client->createReview("you can not see this comment", "this book is very good this book is very good this book is very good this book is very good this book is very good this book is very good this book is very good ", $bookEntry, "4");
 		assert ($entry->getTitle() == "you can not see this comment");
 		$entry = $this->_client->updateReview($entry, "you can see this is good", "this is for test this is for test this is for test this is for test this is for test this is for test this is for test this is for test ", "3");
-		assert ($entry->getTitle() == "you can see this");
+		assert ($entry->getTitle() == "you can see this is good");
 		$this->_client->deleteReview($entry);
 	}
 
@@ -463,6 +507,9 @@ class TestDouBan
 $test = new TestDouBan($API_KEY, $SECRET);
 $test->testPeople();
 $test->testSearchPeople();
+$test->testAuthorizedUid();
+$test->testGetFriends();
+$test->testGetContacts();
 
 $test->testBook();
 $test->testQueryBookByTag();
@@ -481,8 +528,8 @@ $test->testGetTagFeed();
 $test->testGetReview();
 $test->testGetMyReview();
 $test->testCreateReview();
+$test->testGetReviewFeed();
 
 $test->testCollection();
-#
 $test->testGetCollectionFeed();
 

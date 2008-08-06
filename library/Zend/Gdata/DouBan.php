@@ -138,6 +138,29 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	}
 
 	//people	
+	public function getAuthorizedUid()
+	{
+		$url = self::SERVER_URL . "/people/" . urlencode("@me");
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_PeopleEntry');
+
+	}
+	
+	public function getFriends($uid = NULL)
+	{
+		if ($uid !== NULL) {
+			$url = self::SERVER_URL . "/people/" . $uid . "/friends";
+		}
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_PeopleFeed');
+	}
+	
+	public function getContacts($uid = NULL)
+	{
+		if ($uid !== NULL) {
+			$url = self::SERVER_URL . "/people/" . $uid . "/contacts";
+		}
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_PeopleFeed');
+	}
+
 	public function getPeople($peopleId = NULL, $location = NULL)
 	{
 		if ($peopleId !== NULL) {
@@ -329,16 +352,15 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		return $this->getEntry($url, 'Zend_Gdata_DouBan_ReviewEntry');
 	}
 	
-	public function getReviewFeed($location = NULL)
+	public function getReviewFeed($subjectId = NULL, $cat = NULL, $orderby = "score")
 	{
-		if ($location == NULL) {
-			$url = self::PEOPLE_URL . "/review";
-		} else if ($location instanceof Zend_Gdata_Query) {
-			$url = $location->getQueryUrl();
-		} else {
-			$url = $location;
+		if (($subjectId != NULL) && ($cat != NULL))
+		{
+			$url = self::SERVER_URL . "/" . $cat . "/subject/" . $subjectId . "/reviews";
+			$query = new Zend_Gdata_Query($url);
+			$query->setParam("orderby", $orderby);
 		}
-		return $this->getFeed($url, 'Zend_Gdata_DouBan_ReviewFeed');
+		return $this->getFeed($query->getQueryUrl(), 'Zend_Gdata_DouBan_ReviewFeed');
 	}
 
 	public function getMyReview($myId = NULL, $location = NULL)
