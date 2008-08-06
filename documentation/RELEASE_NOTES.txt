@@ -1,0 +1,9 @@
+=== 0.2.2 ===
+August 6, 2008 (revision 20)
+
+- Added GetAuthorizedUid method to Zend_Gdata_Douban class, which can help to get current authorized user.
+- Added db:uid for Zend_Gdata_DouBan_PeopleEntry class, which stands for username.
+- Added getFriends and getContacts method to Zend_Gdata_Douban.
+- Added getCollection method to Zend_Gdata_Douban.
+- Added getCollectionLink method to Zend_Gdata_DouBan_Subject class.
+- Added another parameter "orderby" to getReviewFeed method. 
