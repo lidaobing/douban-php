@@ -120,6 +120,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
                 $tmp = array();
                 $tmp = array_merge($Headers, $extraHeaders);
                 $extraHeaders = $tmp;
+		$this->_httpClient->setHeaders($extraHeaders);
 		return parent::put($data, $url, $remainingRedirects, $contentType, $extraHeaders);
 	}
 	
@@ -133,6 +134,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $url . '?' . $headerStr;
 		}
+		$this->_httpClient->setHeaders($extraHeaders);
 		$response = parent::delete($url);
 
 	}

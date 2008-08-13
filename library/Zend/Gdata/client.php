@@ -18,7 +18,7 @@ class OAuthClient extends Zend_Http_Client
 	{
 		$this->_server = $server;
 		$this->_consumer =  new OAuthConsumer($key, $secret);	
-		$this->_method = new OAuthSignatureMethod_PLAINTEXT();
+		$this->_method = new OAuthSignatureMethod_HMAC_SHA1();
 		parent::__construct();
 	}
 
@@ -90,7 +90,7 @@ class OAuthClient extends Zend_Http_Client
 
 	public function getRequestToken()
 	{
-		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, NULL, NULL, self::REQUEST_TOKEN_URL);
+		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, NULL, 'GET', self::REQUEST_TOKEN_URL);
 		$oauthRequest->sign_request($this->_method, $this->_consumer, NULL);
 		return $this->fetchToken($oauthRequest);
 	}
@@ -113,7 +113,7 @@ class OAuthClient extends Zend_Http_Client
 		if ($key && $secret) {
 			$token = new OAuthToken($key, $secret);
 		}
-		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $token, NULL, self::ACCESS_TOKEN_URL);
+		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $token, 'GET', self::ACCESS_TOKEN_URL);
 		$oauthRequest->sign_request($this->_method, $this->_consumer, $token);
 		return $this->fetchToken($oauthRequest);
 	}
@@ -129,7 +129,7 @@ class OAuthClient extends Zend_Http_Client
 
 	public function accessResource($method = NULL, $url = NULL)
 	{
-		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, NULL, $url);
+		$oauthRequest = OAuthRequest::from_consumer_and_token($this->_consumer, $this->_token, 'GET', $url);
 		$oauthRequest->sign_request($this->_method, $this->_consumer, $this->_token);
 		$headers = $oauthRequest->to_header();
 		if (($method == 'POST')||($method == 'PUT')) {

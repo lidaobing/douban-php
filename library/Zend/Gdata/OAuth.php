@@ -61,16 +61,13 @@ class OAuthSignatureMethod_HMAC_SHA1 extends OAuthSignatureMethod {/*{{{*/
   public function build_signature($request, $consumer, $token) {/*{{{*/
     $base_string = $request->get_signature_base_string();
     $request->base_string = $base_string;
-
     $key_parts = array(
       $consumer->secret,
       ($token) ? $token->secret : ""
     );
-
+   
     $key_parts = array_map(array('OAuthUtil','urlencodeRFC3986'), $key_parts);
-    #array_pop($key_parts);
     $key = implode('&', $key_parts);
-
     return base64_encode( hash_hmac('sha1', $base_string, $key, true));
   }/*}}}*/
 }/*}}}*/
@@ -88,14 +85,6 @@ class OAuthSignatureMethod_PLAINTEXT extends OAuthSignatureMethod {/*{{{*/
     if ($token) {
       array_push($sig, OAuthUtil::urlencodeRFC3986($token->secret));
     }
-   //else {
-   //array_push($sig, '');
-   //}
-   // var_dump($sig);
-   // array_pop($sig);
-   // print "after=";
-   // print "\n";
-   // var_dump($sig);
     $raw = implode("&", $sig);
     // for debug purposes
     $request->base_string = $raw;
@@ -273,15 +262,17 @@ class OAuthRequest {/*{{{*/
     if (isset($params['oauth_signature'])) {
       unset($params['oauth_signature']);
     }
-		
+    $param_arr = parse_url($this->http_url);
     // Urlencode both keys and values
     $keys = array_map(array('OAuthUtil', 'urlencodeRFC3986'), array_keys($params));
     $values = array_map(array('OAuthUtil', 'urlencodeRFC3986'), array_values($params));
-    $params = array_combine($keys, $values);
-
+    $par = array_combine($keys, $values);
+    if (array_key_exists("query", $param_arr)) {
+        $param_query = $param_arr["query"];
+        $params = array_merge($par, OAuthRequest::split_url_string($param_query));
+    }
     // Sort by keys (natsort)
     uksort($params, 'strnatcmp');
-
     // Generate key=value pairs
     $pairs = array();
     foreach ($params as $key=>$value ) {
@@ -314,9 +305,7 @@ class OAuthRequest {/*{{{*/
       $this->get_normalized_http_url(),
       $this->get_signable_parameters()
     );
-
     $parts = array_map(array('OAuthUtil', 'urlencodeRFC3986'), $parts);
-
     return implode('&', $parts);
   }/*}}}*/
 
@@ -378,8 +367,10 @@ class OAuthRequest {/*{{{*/
     $total = array();
     foreach ($this->parameters as $k => $v) {
       if (substr($k, 0, 5) != "oauth") continue;
-      $out .= ',' . OAuthUtil::urlencodeRFC3986($k) . '="' . OAuthUtil::urlencodeRFC3986($v) . '"';
-      $str = OAuthUtil::urlencodeRFC3986($k) . '=' . OAuthUtil::urlencodeRFC3986($v);
+      #$out .= ',' . OAuthUtil::urlencodeRFC3986($k) . '="' . OAuthUtil::urlencodeRFC3986($v) . '"';
+      #$str = OAuthUtil::urlencodeRFC3986($k) . '=' . OAuthUtil::urlencodeRFC3986($v);
+      $out .= ',' . $k . '="' . $v . '"';
+      $str = $k . '=' . $v;
       if ($this->string == null) {
         $this->string = $str;
       } else {
@@ -422,7 +413,6 @@ class OAuthRequest {/*{{{*/
   private static function generate_nonce() {/*{{{*/
     $mt = microtime();
     $rand = mt_rand();
-
     return md5($mt . $rand); // md5s look nicer than numbers
   }/*}}}*/
 
@@ -450,7 +440,14 @@ class OAuthRequest {/*{{{*/
     }
     return $out;
   }/*}}}*/
-
+  public static function split_url_string($param_str) {
+    parse_str($param_str, $arr);
+    $parameters = array();
+    foreach ($arr as $key=>$value) {
+      $parameters[$key] = $value;
+    }  
+    return $parameters;
+  }
   /**
    * helper to try to sort out headers for people who aren't running apache
    */
