@@ -1,5 +1,18 @@
 === 0.2.2 ===
-August 6, 2008 (revision 20)
+August 6, 2008 (reversion 20)
+
+- client.php
+  - Changed $this->_method to OAuthSignatureMethod_HMAC_SHA1.
+  - Bugs: the 3rd parameter of function from_consumer_and_token should be http_method like 'GET'/'PUT'/'DELETE',etc.
+- OAuth.php
+  - Changed method get_signable_parameters() of class OAuthRequest. Added query parameter in url to $params. AND added static function OAuthRequest::split_url_string for url parsing.
+- DouBan.php
+  - Added $this->_httpClient->setHeaders($extraHeaders) to put and delete function. 
+
+
+
+=== 0.2.2 ===
+August 6, 2008 (reversion 20)
 
 - Added GetAuthorizedUid method to Zend_Gdata_Douban class, which can help to get current authorized user.
 - Added db:uid for Zend_Gdata_DouBan_PeopleEntry class, which stands for username.
