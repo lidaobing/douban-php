@@ -1,5 +1,16 @@
+=== 0.2.3 ===
+August 17, 2008 (reversion 27)
+- Added class Zend_Gdata_DouBan_BroadcastingEntry and Zend_Gdata_DouBan_BroadcastingFeed.
+- Douban.php
+  - Add getBroadcastingFeed to class Zend_Gdata_DouBan, which can help to access user's broadcasting.
+  - Add getContactsBroadcastingFeed to Zend_Gdata_DouBan, which can help to access contacts' broadcastin
+g.
+  - Add addBroadcasting to Zend_Gdata_DouBan, which can help to add broadcasting.
+  - Add deleteBroadcasting to Zend_Gdata_DouBan, which can help to delete broadcasting.
+
+
 === 0.2.2 ===
-August 6, 2008 (reversion 20)
+August 6, 2008 (reversion 21)
 
 - client.php
   - Changed $this->_method to OAuthSignatureMethod_HMAC_SHA1.

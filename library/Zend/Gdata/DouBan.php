@@ -18,6 +18,8 @@ require_once 'DouBan/TagEntry.php';
 require_once 'DouBan/TagFeed.php';
 require_once 'DouBan/CollectionEntry.php';
 require_once 'DouBan/CollectionFeed.php';
+require_once 'DouBan/BroadcastingEntry.php';
+require_once 'DouBan/BroadcastingFeed.php';
 require_once 'DouBan/Subject.php';
 require_once 'client.php';
 
@@ -97,7 +99,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		return parent::getFeed($url, $className);
 	}
 	
-	public function post($data, $uri = null, $remainingRedirects = null, $contentType = null, $extraHeaders = null) 
+	public function post($data, $uri = null, $remainingRedirects = null, 
+			$contentType = null, $extraHeaders = null) 
 	{
 		if ($extraHeaders == NULL) {
 			$extraHeaders = array();
@@ -107,10 +110,12 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		$tmp = array();
 		$tmp = array_merge($Headers, $extraHeaders);
 		$extraHeaders = $tmp;
-		return parent::post($data, $uri, $remainingRedirects, $contentType, $extraHeaders);
+		return parent::post($data, $uri, $remainingRedirects, 
+			$contentType, $extraHeaders);
 	}
 	
-	public function put($data, $url = NULL, $remainingRedirects = null, $contentType = null, $extraHeaders = null)
+	public function put($data, $url = NULL, $remainingRedirects = null, 
+			$contentType = null, $extraHeaders = null)
 	{
 		 if ($extraHeaders == NULL) {
                         $extraHeaders = array();
@@ -121,7 +126,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
                 $tmp = array_merge($Headers, $extraHeaders);
                 $extraHeaders = $tmp;
 		$this->_httpClient->setHeaders($extraHeaders);
-		return parent::put($data, $url, $remainingRedirects, $contentType, $extraHeaders);
+		return parent::put($data, $url, $remainingRedirects, 
+			$contentType, $extraHeaders);
 	}
 	
 	public  function delete($url)
@@ -336,7 +342,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	public function getTagFeed($category = NULL, $subjectId = NULL)
 	{
 		if (($subjectId != NULL) && ($category != NULL)) {
-			$url = self::SERVER_URL . "/" . $category . "/subject/" . $subjectId . "/tags";
+			$url = self::SERVER_URL . "/" . $category . "/subject/" . 
+				$subjectId . "/tags";
 		}
 		return $this->getFeed($url, 'Zend_Gdata_DouBan_TagFeed');
 	}
@@ -358,7 +365,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	{
 		if (($subjectId != NULL) && ($cat != NULL))
 		{
-			$url = self::SERVER_URL . "/" . $cat . "/subject/" . $subjectId . "/reviews";
+			$url = self::SERVER_URL . "/" . $cat . "/subject/" . 
+				$subjectId . "/reviews";
 			$query = new Zend_Gdata_Query($url);
 			$query->setParam("orderby", $orderby);
 		}
@@ -377,7 +385,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		return $this->getFeed($url, 'Zend_Gdata_DouBan_ReviewFeed');
 	}
 	
-	public function createReview($title = NULL, $content = NULL, $subject = NULL, $rating = NULL)
+	public function createReview($title = NULL, $content = NULL, $subject = NULL, 
+			$rating = NULL)
 	{
 		$subId =  $subject->getId();
 		$subRating =  $subject->getRating();
@@ -412,7 +421,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 			$rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
                         $entry->setRating($rating);
                 }
-		$response =  $this->put($entry, $entry->getId()->getText(), NULL, "application/atom+xml; charset=utf-8");
+		$response =  $this->put($entry, $entry->getId()->getText(), 
+				NULL, "application/atom+xml; charset=utf-8");
 		$result = new Zend_Gdata_DouBan_ReviewEntry();
                 $result->transferFromXML($response->getBody());
 		return $result;
@@ -444,7 +454,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	public function getCollectionFeed($peopleId = NULL, $cat = NULL)
 	{
 		if ($peopleId !== NULL) {
-			$url = self::SERVER_URL . "/people/" . $peopleId . "/collection?cat=" . $cat;
+			$url = self::SERVER_URL . "/people/" . $peopleId . 
+				"/collection?cat=" . $cat;
 		} else if ($location instanceof Zend_Gdata_Query) {
 			$url = $location->getQueryUrl();
 		} else {
@@ -454,7 +465,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 
 	}
 	
-	public function addCollection($status = NULL, $subject = NULL, $rating = NULL, $tags = array())
+	public function addCollection($status = NULL, $subject = NULL, $rating = NULL, 
+			$tags = array())
 	{
 		$subId =  $subject->getId();
 		$subject = new Zend_Gdata_DouBan_Subject();
@@ -482,7 +494,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 
 	}
 	
-	public function updateCollection($entry = NULL, $status = NULL, $tags = array(), $rating = NULL)
+	public function updateCollection($entry = NULL, $status = NULL, $tags = array(), 
+			$rating = NULL)
 	{
 		$status = new Zend_Gdata_DouBan_Extension_Status($status);
 		$entry->setStatus($status);
@@ -500,7 +513,8 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 			$entry->setTag($tagArr);
 	
 		}
-		$response =  $this->put($entry, $entry->getId()->getText(), NULL,  "application/atom+xml; charset=utf-8");
+		$response =  $this->put($entry, $entry->getId()->getText(), NULL,  
+				"application/atom+xml; charset=utf-8");
                 $result = new Zend_Gdata_DouBan_CollectionEntry();
                 $result->transferFromXML($response->getBody());
                 return $result;
@@ -513,5 +527,49 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		$url = $entry->getId()->getText();
                 return $this->delete($url);
 	}
+
+	//Broadcasting
+	public function getBroadcastingFeed($userID = NULL,  $startIndex = NULL, $maxResults = NULL)
+	{
+		$query = new Zend_Gdata_Query(self::SERVER_URL . "/people/" . 
+				$userID . "/miniblog");
+		if ($maxResults) {
+			$query->setMaxResults($maxResults);
+		}
+		if ($startIndex) {
+			$query->setStartIndex($startIndex);
+		}
+		return $this->getFeed($query->getQueryUrl(), 'Zend_Gdata_DouBan_BroadcastingFeed');
+	}
+
+	public function getContactsBroadcastingFeed($userID = NULL,  $startIndex = NULL, 
+			$maxResults = NULL)
+	{
+		$query = new Zend_Gdata_Query(self::SERVER_URL . "/people/" . 
+			$userID . "/miniblog/contacts");
+		if ($maxResults) {
+			$query->setMaxResults($maxResults);
+		}
+		if ($startIndex) {
+			$query->setStartIndex($startIndex);
+		}
+		return $this->getFeed($query->getQueryUrl(), 'Zend_Gdata_DouBan_BroadcastingFeed');
+	}
+	
+	public function addBroadcasting($category = NULL, $entry = NULL)
+	{
+		$url = self::SERVER_URL . "/miniblog/" . $category;
+		$response = $this->post($entry, $url, NULL, "application/atom+xml; charset=utf-8");
+		$result = new Zend_Gdata_DouBan_BroadcastingEntry();
+		$result->transferFromXML($response->getRawBody());
+		return $result;
+	}
+
+	 public function deleteBroadcasting($entry)
+        {
+                $url = $entry->getId()->getText();
+                return $this->delete($url);
+        }
+
 }
 ?>

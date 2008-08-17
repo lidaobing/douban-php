@@ -1,5 +1,7 @@
 <?php
 require_once 'Zend/Gdata/DouBan.php';
+require_once 'Zend/Gdata/DouBan/BroadcastingEntry.php';
+require_once 'Zend/Gdata/App/Extension/Content.php';
 //Add your own API_KEY and SECRET
 $API_KEY = '';
 $SECRET = '';
@@ -498,6 +500,38 @@ class TestDouBan
 
         	$this->_client->deleteCollection($entry);		
 	}
+
+	//test broadcastin
+	public function testBroadcasting()
+	{
+		$feed = $this->_client->getBroadcastingFeed("sakinijino", 1, 2);
+		$entry_arr = $feed->getEntry();
+		$term_arr = array();
+		foreach ($entry_arr as $entry) {
+			foreach ($entry->getCategory() as $cate) {
+				if ($cate->getTerm()){
+					$term_arr[$cate->getTerm()] = 1;
+				}
+			}
+		}
+		assert(array_key_exists("http://www.douban.com/2007#miniblog.saying", $term_arr));
+		$feed = $this->_client->getContactsBroadcastingFeed("2463802", 1, 2);
+		$entry_arr = $feed->getEntry();
+		$term_arr = array();
+		foreach ($entry_arr as $entry) {
+			foreach ($entry->getCategory() as $cate) {
+				if ($cate->getTerm()){
+				 	$term_arr[$cate->getTerm()] = 1;
+				}
+			}
+		}
+		assert(array_key_exists("http://www.douban.com/2007#miniblog.recommendation", $term_arr));
+		$entry = new Zend_Gdata_Douban_BroadcastingEntry();
+		$content = new Zend_Gdata_App_Extension_Content("this is a test for api should not be seen");
+		$entry->setContent($content);
+		$entry = $this->_client->addBroadcasting("saying", $entry);
+		$this->_client->deleteBroadcasting($entry);
+	}
 }
 
 
@@ -532,4 +566,5 @@ $test->testGetReviewFeed();
 
 $test->testCollection();
 $test->testGetCollectionFeed();
+$test->testBroadcasting();
 
