@@ -21,7 +21,10 @@ class OAuthClient extends Zend_Http_Client
 		$this->_method = new OAuthSignatureMethod_HMAC_SHA1();
 		parent::__construct();
 	}
-
+	public function clearHeaders() 
+	{
+		$this->headers = array();
+	}
 	public function login($key = NULL, $secret = NULL)
 	{
 		if ($key && $secret) {
