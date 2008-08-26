@@ -8,7 +8,7 @@ August 26, 2008 (reversion 28)
 - DouBan.php
   - Change method getEntry and getFeed, use extraHeaders instead of url
     parameters as information for API authorization.
-  - Bugs: in method searchPeople, change url from "/people" to "/people".
+  - Bugs: in method searchPeople, change url from "/people" to "/people/".
   - Change method getMyCollection, which help to get user's private or public
      collections.
   - Add support for privacy setting in  method addCollection.
