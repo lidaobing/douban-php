@@ -4,24 +4,27 @@ require_once 'Zend/Gdata/App/Extension/Title.php';
 require_once 'Zend/Gdata/App/Extension/Content.php';
 require_once 'Zend/Gdata/Extension/Rating.php';
 require_once 'Zend/Gdata/Query.php';
-require_once 'DouBan/PeopleEntry.php';
-require_once 'DouBan/PeopleFeed.php';
-require_once 'DouBan/BookEntry.php';
-require_once 'DouBan/BookFeed.php';
-require_once 'DouBan/MusicEntry.php';
-require_once 'DouBan/MusicFeed.php';
-require_once 'DouBan/MovieEntry.php';
-require_once 'DouBan/MovieFeed.php';
-require_once 'DouBan/ReviewEntry.php';
-require_once 'DouBan/ReviewFeed.php';
-require_once 'DouBan/TagEntry.php';
-require_once 'DouBan/TagFeed.php';
-require_once 'DouBan/CollectionEntry.php';
-require_once 'DouBan/CollectionFeed.php';
-require_once 'DouBan/BroadcastingEntry.php';
-require_once 'DouBan/BroadcastingFeed.php';
-require_once 'DouBan/Subject.php';
-require_once 'client.php';
+require_once 'Zend/Gdata/DouBan/PeopleEntry.php';
+require_once 'Zend/Gdata/DouBan/PeopleFeed.php';
+require_once 'Zend/Gdata/DouBan/BookEntry.php';
+require_once 'Zend/Gdata/DouBan/BookFeed.php';
+require_once 'Zend/Gdata/DouBan/MusicEntry.php';
+require_once 'Zend/Gdata/DouBan/MusicFeed.php';
+require_once 'Zend/Gdata/DouBan/MovieEntry.php';
+require_once 'Zend/Gdata/DouBan/MovieFeed.php';
+require_once 'Zend/Gdata/DouBan/ReviewEntry.php';
+require_once 'Zend/Gdata/DouBan/ReviewFeed.php';
+require_once 'Zend/Gdata/DouBan/TagEntry.php';
+require_once 'Zend/Gdata/DouBan/TagFeed.php';
+require_once 'Zend/Gdata/DouBan/CollectionEntry.php';
+require_once 'Zend/Gdata/DouBan/CollectionFeed.php';
+require_once 'Zend/Gdata/DouBan/BroadcastingEntry.php';
+require_once 'Zend/Gdata/DouBan/BroadcastingFeed.php';
+require_once 'Zend/Gdata/DouBan/NoteEntry.php';
+require_once 'Zend/Gdata/DouBan/NoteFeed.php';
+require_once 'Zend/Gdata/DouBan/Subject.php';
+require_once 'Zend/Gdata/DouBan/Extension/Attribute.php';
+require_once 'Zend/Gdata/client.php';
 
 class Zend_Gdata_DouBan extends Zend_Gdata
 {
@@ -58,12 +61,9 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		$authHeaderArr = $this->_client->getAuthHeader('GET', $url);
 		$authHeader = $authHeaderArr[0];
 		$headerStr = $authHeaderArr[1];
+		$this->_client->clearHeaders();
 		if ($authHeader) {
-			if (stristr($url, '?')) {
-				$url = $url . '&' . $headerStr;
-			} else {
-				$url = $url . '?' . $headerStr;
-			}
+			$this->_httpClient->setHeaders($authHeader);
 		} 
 	        else if ($this->_APIKey) {
 			$param = 'apikey=' . urlencode($this->_APIKey);
@@ -81,12 +81,9 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		$authHeaderArr = $this->_client->getAuthHeader('GET', $url);
 		$authHeader = $authHeaderArr[0];
 		$headerStr = $authHeaderArr[1];
+		$this->_client->clearHeaders();
 		if ($authHeader) {
-			if (stristr($url, '?')) {
-				$url = $url . '&' . $headerStr;
-			} else {
-				$url = $url . '?' . $headerStr;
-			}
+			$this->_httpClient->setHeaders($authHeader);
 		} 
 	        else if ($this->_APIKey) {
 			$param = 'apikey=' . urlencode($this->_APIKey);
@@ -195,7 +192,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	
 	public function searchPeople($queryText, $startIndex = NULL, $maxResults = NULL)
 	{
-		$query =new Zend_Gdata_Query(self::SERVER_URL . "/people");
+		$query =new Zend_Gdata_Query(self::SERVER_URL . "/people/");
 		$query->setQuery($queryText);
 		$query->setMaxResults($maxResults);
 		$query->setStartIndex($startIndex);
@@ -451,6 +448,18 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 
 	}
 	
+	public function getMyCollection($uid, $cat, $tag, $status = NULL, $startIndex = NULL, 
+			$maxResults = NULL, $updatedMax = NULL, $updatedMin = NULL)
+	{
+		$query = new Zend_Gdata_Query(self::SERVER_URL . "/people/" . $uid . "/collection");
+                if ($tag) $query->setParam('tag', $tag);
+                if ($cat) $query->setParam('cat', $cat);
+		if ($status) $query->setParam('status', $status);
+                if ($maxResults) $query->setMaxResults($maxResults);
+                if ($startIndex) $query->setStartIndex($startIndex);
+                return $this->getFeed($query->getQueryUrl(), 'Zend_Gdata_DouBan_CollectionFeed');	
+	}
+
 	public function getCollectionFeed($peopleId = NULL, $cat = NULL)
 	{
 		if ($peopleId !== NULL) {
@@ -461,12 +470,12 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		} else {
 			$url = $location;
 		}
-		return $this->getEntry($url, 'Zend_Gdata_DouBan_CollectionFeed');
+		return $this->getFeed($url, 'Zend_Gdata_DouBan_CollectionFeed');
 
 	}
 	
 	public function addCollection($status = NULL, $subject = NULL, $rating = NULL, 
-			$tags = array())
+			$tags = array(), $private = False)
 	{
 		$subId =  $subject->getId();
 		$subject = new Zend_Gdata_DouBan_Subject();
@@ -477,15 +486,23 @@ class Zend_Gdata_DouBan extends Zend_Gdata
                         $rating = new Zend_Gdata_DouBan_Extension_Rating($rating);
                         $entry->setRating($rating);
                 }
-		$tagArr = array();
+		if ($private) {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("private");
+			$attribute->setName("privacy");
+			$entry->setAttribute($attribute);
+		}
+		else {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("private");
+			$attribute->setName("public");
+			$entry->setAttribute($attribute);
+		}
 		foreach ($tags as $tag) {
 			$obj = new Zend_Gdata_DouBan_Extension_Tag();
 			$obj->setName($tag);
-			$tagArr[] = $obj;
+			$entry->setTag($obj);
 		}
 		$status = new Zend_Gdata_DouBan_Extension_Status($status);
 		$entry->setStatus($status);
-		$entry->setTag($tagArr);
 		$url = self::SERVER_URL . "/collection";
 		$response = $this->post($entry, $url, NULL, "application/atom+xml; charset=utf-8");
 		$result = new Zend_Gdata_DouBan_CollectionEntry();
@@ -495,7 +512,7 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 	}
 	
 	public function updateCollection($entry = NULL, $status = NULL, $tags = array(), 
-			$rating = NULL)
+			$rating = NULL, $private = False)
 	{
 		$status = new Zend_Gdata_DouBan_Extension_Status($status);
 		$entry->setStatus($status);
@@ -504,14 +521,22 @@ class Zend_Gdata_DouBan extends Zend_Gdata
                         $entry->setRating($rating);
 		}
 		if ($tags) {
-			$tagArr = array();
          	       	foreach ($tags as $tag) {
                         	$obj = new Zend_Gdata_DouBan_Extension_Tag();
                         	$obj->setName($tag);
-                        	$tagArr[] = $obj;
+				$entry->setTag($obj);
                 	}
-			$entry->setTag($tagArr);
 	
+		}
+		if ($private) {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("private");
+			$attribute->setName("privacy");
+			$entry->setAttribute($attribute);
+		}
+		else {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("private");
+			$attribute->setName("public");
+			$entry->setAttribute($attribute);
 		}
 		$response =  $this->put($entry, $entry->getId()->getText(), NULL,  
 				"application/atom+xml; charset=utf-8");
@@ -571,5 +596,94 @@ class Zend_Gdata_DouBan extends Zend_Gdata
                 return $this->delete($url);
         }
 
+	public function getNote($noteId = NULL, $location = NULL)
+	{
+		if ($noteId !== NULL) {
+			$url = self::SERVER_URL . "/note/" . $noteId;
+		} else if ($location instanceof Zend_Gdata_Query) {
+			$url = $location->getQueryUrl();
+		} else {
+			$url = $location;
+		}
+		return $this->getEntry($url, 'Zend_Gdata_DouBan_NoteEntry');
+	}
+
+	public function getMyNotes($uid, $startIndex = NULL, $maxResults = NULL)
+	{
+		$query = new Zend_Gdata_Query(self::SERVER_URL . "/people/" . $uid . "/notes");
+                $query->setMaxResults($maxResults);
+                $query->setStartIndex($startIndex);
+		return $this->getFeed($query->getQueryUrl(), 'Zend_Gdata_DouBan_NoteFeed');
+
+	}
+	
+	public function addNote($entry, $private = False, $canReply = True)
+	{
+		if ($private) {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("private");
+			$attribute->setName("privacy");
+			$entry->setAttribute($attribute);
+		}
+		else {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("public");
+			$attribute->setName("privacy");
+			$entry->setAttribute($attribute);
+		}
+		if ($canReply) {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("yes");
+			$attribute->setName("can_reply");
+			$entry->setAttribute($attribute);
+		}
+		else {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("no");
+                        $attribute->setName("can_reply");
+                        $entry->setAttribute($attribute);
+		}
+				
+		$url = self::SERVER_URL . "/notes";
+		$response = $this->post($entry, $url, NULL, "application/atom+xml; charset=utf-8");
+		$result = new Zend_Gdata_DouBan_NoteEntry();
+		$result->transferFromXML($response->getRawBody());
+		return $result;
+	}
+	
+	public function updateNote($entry = NULL, $title, $content, $private = NULL, $canReply = NULL)
+	{
+		$title = new Zend_Gdata_App_Extension_Title($title);
+                $content = new Zend_Gdata_App_Extension_Content($content);
+                $entry->setContent($content);
+                $entry->setTitle($title);
+		if ($private) {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("private");
+			$attribute->setName("privacy");
+			$entry->setAttribute($attribute);
+		}
+		else {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("public");
+			$attribute->setName("privacy");
+			$entry->setAttribute($attribute);
+		}
+		if ($canReply) {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("yes");
+			$attribute->setName("can_reply");
+			$entry->setAttribute($attribute);
+		}
+		else {
+			$attribute = new Zend_Gdata_DouBan_Extension_Attribute("no");
+                        $attribute->setName("can_reply");
+                        $entry->setAttribute($attribute);
+		}
+		$response =  $this->put($entry, $entry->getId()->getText(), 
+				NULL, "application/atom+xml; charset=utf-8");
+		$result = new Zend_Gdata_DouBan_NoteEntry();
+                $result->transferFromXML($response->getBody());
+		return $result;
+	}
+
+	public function deleteNote($entry)
+        {
+                $url = $entry->getId()->getText();
+                return $this->delete($url);
+        }
 }
 ?>

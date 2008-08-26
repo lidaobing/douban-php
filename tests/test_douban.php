@@ -2,6 +2,11 @@
 require_once 'Zend/Gdata/DouBan.php';
 require_once 'Zend/Gdata/DouBan/BroadcastingEntry.php';
 require_once 'Zend/Gdata/App/Extension/Content.php';
+require_once 'Zend/Gdata/App/Extension/Title.php';
+require_once 'Zend/Gdata/App/Extension/Content.php';
+require_once 'Zend/Gdata/DouBan/Extension/Attribute.php';
+require_once 'Zend/Gdata/DouBan/NoteEntry.php';
+
 //Add your own API_KEY and SECRET
 $API_KEY = '';
 $SECRET = '';
@@ -10,6 +15,7 @@ class TestDouBan
 {
 	protected $_client = null;
 	//Add your own TOKEN_KEY and TOKEN_SECRET
+
 	const TOKEN_KEY = '';
         const TOKEN_SECRET = '';
 
@@ -30,7 +36,7 @@ class TestDouBan
 	
 	public function testSearchPeople()
 	{
-		$peopleFeed = $this->_client->searchPeople('boy', 2, 10);
+		$peopleFeed = $this->_client->searchPeople('boy', 1, 3);
 		$arr = $peopleFeed->getEntry();
 		$arr_title = array();
 		foreach ($arr as $entry) {
@@ -481,24 +487,24 @@ class TestDouBan
                 $subTag = $tagArr[0];
 
                 $tag = array("nice", "安徒生");
-                $entry = $this->_client->addCollection("wish", $subject, NULL, $tag);
+                $entry = $this->_client->addCollection("wish", $subject, NULL, $tag, False);
                 assert ($entry->getStatus()->getText() == "wish");
                 assert (count($entry->getTag()) == 2);
                 $tagArr = $entry->getTag();
                 assert ($tagArr[0]->getName() == "nice");
                 assert ($tagArr[1]->getName() == "安徒生");
-
 		$entry = $this->_client->getCollection($entry->getId()->getText());
-
 	        assert ($entry->getStatus()->getText() == "wish");
         	assert (count($entry->getTag()) == 2);
                 $tag = array("ggnice", "安徒生");
-        	$entry = $this->_client->updateCollection($entry, "read", $tag, "3");
+        	$entry = $this->_client->updateCollection($entry, "read", $tag, "3", True);
    		$tagArr = $entry->getTag();
 		assert ($tagArr[0]->getName() == "ggnice");
 		assert ($tagArr[1]->getName() == "安徒生");
 
         	$this->_client->deleteCollection($entry);		
+		$feed = $this->_client->getMyCollection("2463802", "book", "read", "read", "1", "2");
+
 	}
 
 	//test broadcastin
@@ -532,6 +538,27 @@ class TestDouBan
 		$entry = $this->_client->addBroadcasting("saying", $entry);
 		$this->_client->deleteBroadcasting($entry);
 	}
+
+	//Note
+	public function testNote()
+	{
+		$entry = $this->_client->getNote("17030527");
+		assert ($entry->getContent()->getText() == "my note");
+		assert ($entry->getTitle()->getText() == "my note");
+		$entry = new Zend_Gdata_DouBan_NoteEntry();
+		$title = new Zend_Gdata_App_Extension_Title("a test note");
+                $content = new Zend_Gdata_App_Extension_Content("this note is for testing");
+		$entry->setTitle($title);
+		$entry->setContent($content);
+		$entry = $this->_client->addNote($entry, False, False);
+		assert ($entry->getTitle()->getText() == "a test note");
+		$entry = $this->_client->updateNote($entry, "it is a very good day!", "my good note", True, True);
+		assert ($entry->getContent()->getText() == "my good note");
+		$this->_client->deleteNote($entry);
+
+		$feed = $this->_client->getMyNotes("2463802", "1", "2");
+
+	}
 }
 
 
@@ -540,19 +567,20 @@ class TestDouBan
 
 $test = new TestDouBan($API_KEY, $SECRET);
 $test->testPeople();
+$test->testSearchBook();
 $test->testSearchPeople();
 $test->testAuthorizedUid();
 $test->testGetFriends();
 $test->testGetContacts();
-
+#
 $test->testBook();
 $test->testQueryBookByTag();
 $test->testSearchBook();
-
+##
 $test->testMusic();
 $test->testQueryMusicByTag();
 $test->testSearchMusic();
-
+##
 $test->testMovie();
 $test->testQueryMovieByTag();
 $test->testSearchMovie();
@@ -561,10 +589,13 @@ $test->testGetTagFeed();
 
 $test->testGetReview();
 $test->testGetMyReview();
+$test->testGetReviewFeed();
 $test->testCreateReview();
 $test->testGetReviewFeed();
 
 $test->testCollection();
 $test->testGetCollectionFeed();
+
 $test->testBroadcasting();
 
+$test->testNote();

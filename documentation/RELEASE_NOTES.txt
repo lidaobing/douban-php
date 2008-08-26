@@ -1,6 +1,26 @@
+=== 0.2.4 ===
+August 26, 2008 (reversion 28)
+- Add class Zend_Gdata_DouBan_NoteEntry and
+  Zend_Gdata_DouBan_NoteFeed.
+- OAuth.php
+  - Change return(add urlencode) value of method build_signature in class
+    OAuthSignatureMethod_HMAC_SHA1.
+- DouBan.php
+  - Change method getEntry and getFeed, use extraHeaders instead of url
+    parameters as information for API authorization.
+  - Bugs: in method searchPeople, change url from "/people" to "/people".
+  - Change method getMyCollection, which help to get user's private or public
+     collections.
+  - Add support for privacy setting in  method addCollection.
+  - Add getNote to class Zend_Gdata_DouBan, which can help to access noteEntry.
+  - Add getMyNotes to class Zend_Gdata_DouBan, which can help to access user's notes.
+  - Add addNote to class Zend_Gdata_DouBan, which can help to add notes.
+  - Add updateNote to class Zend_Gdata_DouBan, which can help to update notes.
+  - Add deleteNote to class Zend_Gdata_DouBan, which can help to delete notes.
+
 === 0.2.3 ===
 August 17, 2008 (reversion 27)
-- Added class Zend_Gdata_DouBan_BroadcastingEntry and Zend_Gdata_DouBan_BroadcastingFeed.
+- Add class Zend_Gdata_DouBan_BroadcastingEntry and Zend_Gdata_DouBan_BroadcastingFeed.
 - Douban.php
   - Add getBroadcastingFeed to class Zend_Gdata_DouBan, which can help to access user's broadcasting.
   - Add getContactsBroadcastingFeed to Zend_Gdata_DouBan, which can help to access contacts' broadcastin
@@ -13,21 +33,21 @@ g.
 August 6, 2008 (reversion 21)
 
 - client.php
-  - Changed $this->_method to OAuthSignatureMethod_HMAC_SHA1.
+  - Change $this->_method to OAuthSignatureMethod_HMAC_SHA1.
   - Bugs: the 3rd parameter of function from_consumer_and_token should be http_method like 'GET'/'PUT'/'DELETE',etc.
 - OAuth.php
-  - Changed method get_signable_parameters() of class OAuthRequest. Added query parameter in url to $params. AND added static function OAuthRequest::split_url_string for url parsing.
+  - Change method get_signable_parameters() of class OAuthRequest. Added query parameter in url to $params. AND add static function OAuthRequest::split_url_string for url parsing.
 - DouBan.php
-  - Added $this->_httpClient->setHeaders($extraHeaders) to put and delete function. 
+  - Add $this->_httpClient->setHeaders($extraHeaders) to put and delete function. 
 
 
 
 === 0.2.2 ===
 August 6, 2008 (reversion 20)
 
-- Added GetAuthorizedUid method to Zend_Gdata_Douban class, which can help to get current authorized user.
-- Added db:uid for Zend_Gdata_DouBan_PeopleEntry class, which stands for username.
-- Added getFriends and getContacts method to Zend_Gdata_Douban.
-- Added getCollection method to Zend_Gdata_Douban.
-- Added getCollectionLink method to Zend_Gdata_DouBan_Subject class.
-- Added another parameter "orderby" to getReviewFeed method. 
+- Add GetAuthorizedUid method to Zend_Gdata_Douban class, which can help to get current authorized user.
+- Add db:uid for Zend_Gdata_DouBan_PeopleEntry class, which stands for username.
+- Add getFriends and getContacts method to Zend_Gdata_Douban.
+- Add getCollection method to Zend_Gdata_Douban.
+- Add getCollectionLink method to Zend_Gdata_DouBan_Subject class.
+- Add another parameter "orderby" to getReviewFeed method. 
