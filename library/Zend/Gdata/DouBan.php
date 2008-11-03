@@ -51,6 +51,15 @@ class Zend_Gdata_DouBan extends Zend_Gdata
 		return $this->_client->getAuthorizationUrl($apiKey, $secret, $callback);
 	}
 	
+	public function getRequestToken()
+    {
+        return $this->_client->getRequestToken();
+    }
+
+	public function getAccessToken($key = NULL, $secret = NULL, $token = NULL)
+    {
+        return $this->_client->getAccessToken($key, $secret);
+    }
 	public function programmaticLogin($tokenKey = NULL, $tokenSecret = NULL)
 	{
 		return $this->_client->login($tokenKey, $tokenSecret);
