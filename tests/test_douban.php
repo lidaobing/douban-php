@@ -8,8 +8,8 @@ require_once 'Zend/Gdata/DouBan/Extension/Attribute.php';
 require_once 'Zend/Gdata/DouBan/NoteEntry.php';
 
 //Add your own API_KEY and SECRET
-$API_KEY = '';
-$SECRET = '';
+$API_KEY = '089a14c7489d3a0019ce3e55d9d7ae00';
+$SECRET = '71a4f6b65a403645';
 
 class TestDouBan
 {
