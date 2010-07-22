@@ -11,7 +11,7 @@ class Zend_Gdata_DouBan_PeopleEntry extends Zend_Gdata_App_Entry
 	protected $_location = null;
 	protected $_uid = null;
 
-	public function __construct($element)
+	public function __construct($element=null)
 	{
 		
 		foreach (Zend_Gdata_DouBan::$namespaces as $nsPrefix => $nsUri) {
