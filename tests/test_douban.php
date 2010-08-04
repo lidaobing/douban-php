@@ -1,4 +1,8 @@
 <?php
+
+set_include_path(get_include_path() . PATH_SEPARATOR . 
+    dirname(__FILE__) . "/../library");
+
 require_once 'Zend/Gdata/DouBan.php';
 require_once 'Zend/Gdata/DouBan/BroadcastingEntry.php';
 require_once 'Zend/Gdata/App/Extension/Content.php';
