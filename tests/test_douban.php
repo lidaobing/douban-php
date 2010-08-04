@@ -1,7 +1,8 @@
 <?php
 
-set_include_path(get_include_path() . PATH_SEPARATOR . 
-    dirname(__FILE__) . "/../library");
+set_include_path(get_include_path() . PATH_SEPARATOR .  dirname(__FILE__) . "/../library");
+
+require_once 'PHPUnit/Framework.php';
 
 require_once 'Zend/Gdata/DouBan.php';
 require_once 'Zend/Gdata/DouBan/BroadcastingEntry.php';
@@ -12,20 +13,20 @@ require_once 'Zend/Gdata/DouBan/Extension/Attribute.php';
 require_once 'Zend/Gdata/DouBan/NoteEntry.php';
 
 //Add your own API_KEY and SECRET
-$API_KEY = '089a14c7489d3a0019ce3e55d9d7ae00';
-$SECRET = '71a4f6b65a403645';
+$API_KEY = '042bc009d7d4a04d0c83401d877de0e7';
+$SECRET = 'a9bb2d7f8cc00110';
 
-class TestDouBan
+class TestDouBan extends PHPUnit_Framework_TestCase
 {
 	protected $_client = null;
 	//Add your own TOKEN_KEY and TOKEN_SECRET
 
-	const TOKEN_KEY = '';
-        const TOKEN_SECRET = '';
+	const TOKEN_KEY = 'be84e4bc8d0581d03b8eae35a7108570';
+        const TOKEN_SECRET = '16eeaa7b1053323c';
 
-	public function __construct($api, $secret)
+	public function setUp()
 	{
-		$this->_client = new Zend_Gdata_DouBan($api, $secret);
+		$this->_client = new Zend_Gdata_DouBan('042bc009d7d4a04d0c83401d877de0e7', 'a9bb2d7f8cc00110');
                 $this->_client->programmaticLogin(self::TOKEN_KEY, self::TOKEN_SECRET);
 	}
 
@@ -41,14 +42,8 @@ class TestDouBan
 	public function testSearchPeople()
 	{
 		$peopleFeed = $this->_client->searchPeople('boy', 1, 3);
-		$arr = $peopleFeed->getEntry();
-		$arr_title = array();
-		foreach ($arr as $entry) {
-			if ($entry->getTitle()) {
-				$arr_title[$entry->getTitle()->getText()] = 1;
-			}
-		}
-		assert (array_key_exists('cow-boy', $arr_title));
+                $arr = $peopleFeed->getEntry();
+                $this->assertEquals(3, count($arr));
 	}
 	
 	public function testAuthorizedUid()
@@ -564,42 +559,3 @@ class TestDouBan
 
 	}
 }
-
-
-
-
-
-$test = new TestDouBan($API_KEY, $SECRET);
-$test->testPeople();
-$test->testSearchBook();
-$test->testSearchPeople();
-$test->testAuthorizedUid();
-$test->testGetFriends();
-$test->testGetContacts();
-#
-$test->testBook();
-$test->testQueryBookByTag();
-$test->testSearchBook();
-##
-$test->testMusic();
-$test->testQueryMusicByTag();
-$test->testSearchMusic();
-##
-$test->testMovie();
-$test->testQueryMovieByTag();
-$test->testSearchMovie();
-
-$test->testGetTagFeed();
-
-$test->testGetReview();
-$test->testGetMyReview();
-$test->testGetReviewFeed();
-$test->testCreateReview();
-$test->testGetReviewFeed();
-
-$test->testCollection();
-$test->testGetCollectionFeed();
-
-$test->testBroadcasting();
-
-$test->testNote();
